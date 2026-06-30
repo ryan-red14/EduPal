@@ -57,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     { id: "horizon", name: "Horizon", color: "bg-[#C4B5FD]", label: "Lavender" },
     { id: "forest", name: "Forest Scholar", color: "bg-[#B68D57]", label: "Grounded Green" },
     { id: "classic-light", name: "Classic Light", color: "bg-[#1E3A8A]", label: "Clean Light" },
+    { id: "tech", name: "Tech (NEW)", color: "bg-[#14B8A6]", label: "Teal Steel" },
   ];
 
   const handleThemeChange = (selectedTheme: Theme) => {

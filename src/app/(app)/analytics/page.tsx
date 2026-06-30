@@ -1,26 +1,66 @@
 "use client";
 
-import React from "react";
-import { TrendingUp, Award, Clock, Star, Flame, Sparkles, BookOpen } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { TrendingUp, Award, Clock, Star, Flame, Sparkles, BookOpen, FileText, CheckCircle2, ChevronRight } from "lucide-react";
+
+interface SubjectResult {
+  code: string;
+  name: string;
+  cbeLevel: string;
+  points: number;
+  cbeDesc: string;
+  tradGrade: string;
+  tradDesc: string;
+  gpa: number;
+}
 
 export default function AnalyticsPage() {
-  const kpis = [
-    { label: "Tests Completed", value: "8", icon: Award, color: "text-[#D4AF37]", bg: "bg-[#D4AF37]/10" },
-    { label: "Average Score", value: "78%", icon: TrendingUp, color: "text-[#10B981]", bg: "bg-[#10B981]/10" },
-    { label: "Best Score", value: "95%", icon: Star, color: "text-[#3B82F6]", bg: "bg-[#3B82F6]/10" },
-    { label: "Hours Studied", value: "14.5h", icon: Clock, color: "text-[#A855F7]", bg: "bg-[#A855F7]/10" },
+  const [rubric, setRubric] = useState<"cbe" | "traditional" | "gpa">("cbe");
+  const [studentName, setStudentName] = useState("RYAN MUUO");
+  const [schoolName, setSchoolName] = useState("OUR LADY QUEEN OF PEACE");
+  const [studentGrade, setStudentGrade] = useState("8");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("edupal-name");
+      if (name) setStudentName(name.toUpperCase());
+      const school = localStorage.getItem("edupal-school");
+      if (school) setSchoolName(school.toUpperCase());
+      const grade = localStorage.getItem("edupal-grade") || "8";
+      setUserGradeData(grade);
+    }
+  }, []);
+
+  const [userGradeData, setUserGradeData] = useState("8");
+
+  // Mock KJSEA Results Slip Data (compulsory junior secondary subjects)
+  const juniorResults: SubjectResult[] = [
+    { code: "901", name: "English", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "902", name: "Kiswahili", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "903", name: "Mathematics", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "905", name: "Integrated Science", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "906", name: "Agriculture", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "907", name: "Social Studies", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "908", name: "Christian Religious Education", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "911", name: "Creative Arts & Sports", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "912", name: "Pre-technical Studies", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
   ];
 
-  const strengths = [
-    { name: "Physics: Waves", score: 92, status: "Mastered" },
-    { name: "Biology: Cells & Genetics", score: 88, status: "Strong" },
-    { name: "English: Grammar Basics", score: 85, status: "Strong" },
+  const seniorResults: SubjectResult[] = [
+    { code: "101", name: "English (Core)", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "102", name: "Kiswahili (Core)", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "103", name: "Core Mathematics", cbeLevel: "ME1", points: 6, cbeDesc: "Meeting Expectation", tradGrade: "B+", tradDesc: "Very Good", gpa: 3.3 },
+    { code: "231", name: "Biology (STEM)", cbeLevel: "EE2", points: 7, cbeDesc: "Exceeding Expectation", tradGrade: "A-", tradDesc: "Excellent", gpa: 3.7 },
+    { code: "232", name: "Chemistry (STEM)", cbeLevel: "ME2", points: 5, cbeDesc: "Meeting Expectation", tradGrade: "B", tradDesc: "Good", gpa: 3.0 },
+    { code: "233", name: "Physics (STEM)", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
+    { code: "238", name: "Computer Studies (STEM)", cbeLevel: "EE1", points: 8, cbeDesc: "Exceeding Expectation", tradGrade: "A", tradDesc: "Excellent", gpa: 4.0 },
   ];
 
-  const weaknesses = [
-    { name: "Maths: Quadratic Equations", score: 58, status: "Needs Review" },
-    { name: "Chemistry: Balancing Equations", score: 62, status: "Needs Review" },
-  ];
+  const results = parseInt(userGradeData) >= 10 ? seniorResults : juniorResults;
+
+  // Calculate Average GPA/Points
+  const avgPoints = (results.reduce((acc, r) => acc + r.points, 0) / results.length).toFixed(2);
+  const avgGpa = (results.reduce((acc, r) => acc + r.gpa, 0) / results.length).toFixed(2);
 
   return (
     <div className="space-y-6 md:space-y-8 animate-fade-up">
@@ -30,75 +70,212 @@ export default function AnalyticsPage() {
           Performance Analytics
         </h1>
         <p className="text-xs md:text-sm text-text-muted">
-          Detailed metrics of your academic progress, strength areas, and suggested focus topics.
+          Track syllabus progression, view assessment transcripts, and toggle grading rubrics.
         </p>
       </div>
 
-      {/* KPIs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi, idx) => {
-          const Icon = kpi.icon;
-          return (
-            <div
-              key={idx}
-              className="flex items-center justify-between p-5 rounded-xl border border-border-default bg-surface hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+      {/* Rubric Toggle */}
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="flex gap-2 bg-background border border-border-default/45 p-1 rounded-xl w-full sm:w-auto">
+          {[
+            { id: "cbe", label: "CBE Rubric" },
+            { id: "traditional", label: "Traditional (A-E)" },
+            { id: "gpa", label: "GPA Scale (4.0)" }
+          ].map((r) => (
+            <button
+              key={r.id}
+              onClick={() => setRubric(r.id as any)}
+              className={`flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active-press ${
+                rubric === r.id
+                  ? "bg-accent/15 border border-accent/25 text-accent"
+                  : "text-text-muted hover:text-text-default"
+              }`}
             >
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                  {kpi.label}
-                </span>
-                <p className="text-2xl font-black text-text-default">{kpi.value}</p>
-              </div>
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${kpi.bg} ${kpi.color}`}>
-                <Icon className="h-5 w-5" />
-              </div>
-            </div>
-          );
-        })}
+              {r.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="text-xs font-semibold text-text-muted">
+          Syllabus Average: <span className="text-accent font-bold">{rubric === "gpa" ? `${avgGpa} GPA` : `${avgPoints} Points`}</span>
+        </div>
       </div>
 
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Left Column - Charts & Breakdown (60%) */}
+        {/* Left Column: KNEC Transcript (3/5) */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Mock Score Trend SVG Graph */}
+          {/* Official KNEC Slip Card */}
+          <div className="rounded-2xl border border-border-default bg-surface overflow-hidden shadow-xl">
+            {/* Header banner */}
+            <div className="bg-background/40 border-b border-border-default/60 p-5 text-center space-y-3 relative">
+              {/* Mock Seal */}
+              <div className="h-10 w-10 rounded-full border border-accent/45 bg-accent/5 mx-auto flex items-center justify-center text-[8px] font-bold text-accent">
+                KNEC
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-sm font-extrabold text-text-default tracking-wide uppercase">
+                  The Kenya National Examinations Council
+                </h2>
+                <p className="text-xs font-bold text-accent">
+                  2025 {parseInt(userGradeData) >= 10 ? "KPSEA/KCSE" : "KJSEA"} Results
+                </p>
+              </div>
+            </div>
+
+            {/* Student metadata */}
+            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-border-default/30 text-xs">
+              <div className="space-y-1.5">
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Assessment Number</span>
+                  <span className="font-mono font-bold text-text-default">A001741925</span>
+                </div>
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Full Name</span>
+                  <span className="font-bold text-text-default">{studentName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Gender</span>
+                  <span className="font-bold text-text-default">M</span>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Centre Code</span>
+                  <span className="font-mono font-bold text-text-default">12315261</span>
+                </div>
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Centre Name</span>
+                  <span className="font-bold text-text-default truncate max-w-[150px]">{schoolName}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Results Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-semibold">
+                <thead>
+                  <tr className="border-b border-border-default/30 bg-background/20 text-text-muted uppercase text-[9px] tracking-wider">
+                    <th className="py-3 px-4">Subject Code</th>
+                    <th className="py-3 px-4">Subject Name</th>
+                    <th className="py-3 px-4">Performance Level</th>
+                    <th className="py-3 px-4">Points</th>
+                    <th className="py-3 px-4">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-default/20 text-text-default">
+                  {results.map((r) => (
+                    <tr key={r.code} className="hover:bg-background/10">
+                      <td className="py-3 px-4 font-mono">{r.code}</td>
+                      <td className="py-3 px-4 font-bold">{r.name}</td>
+                      
+                      {/* Performance Level */}
+                      <td className="py-3 px-4 font-mono text-accent">
+                        {rubric === "cbe" && r.cbeLevel}
+                        {rubric === "traditional" && r.tradGrade}
+                        {rubric === "gpa" && r.gpa.toFixed(1)}
+                      </td>
+
+                      {/* Points */}
+                      <td className="py-3 px-4 font-mono">{r.points}</td>
+
+                      {/* Description */}
+                      <td className="py-3 px-4 text-text-muted font-medium">
+                        {rubric === "cbe" && r.cbeDesc}
+                        {rubric === "traditional" && r.tradDesc}
+                        {rubric === "gpa" && `Grade Point: ${r.gpa.toFixed(1)}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pathway averages (Compulsory footer) */}
+            <div className="p-4 bg-background/25 border-t border-border-default/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs">
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
+                <p className="text-[9px] text-text-muted font-bold uppercase">Arts & Sports Pathway</p>
+                <p className="font-black text-accent mt-0.5">73.6632</p>
+              </div>
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
+                <p className="text-[9px] text-text-muted font-bold uppercase">Social Science Pathway</p>
+                <p className="font-black text-accent mt-0.5">73.7231</p>
+              </div>
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
+                <p className="text-[9px] text-text-muted font-bold uppercase">STEM Pathway</p>
+                <p className="font-black text-accent mt-0.5">73.7518</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Animated SVG Charts (2/5) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Study Time bar chart */}
           <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
-            <h3 className="text-sm font-bold text-text-default uppercase tracking-wider">Score Progression</h3>
-            
-            <div className="h-48 w-full bg-background/25 rounded-lg border border-border-default/20 relative flex items-end p-4">
-              {/* SVG Area for Chart */}
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+              <Clock className="h-4.5 w-4.5 text-accent" />
+              <span>Weekly Study Distribution (Hours)</span>
+            </h3>
+
+            <div className="h-40 w-full flex items-end justify-between gap-2 pt-6 pb-2 px-2 relative border-b border-border-default/30">
+              {/* Bars */}
+              {[
+                { day: "Mon", hrs: 2.5 },
+                { day: "Tue", hrs: 1.8 },
+                { day: "Wed", hrs: 3.2 },
+                { day: "Thu", hrs: 0.5 },
+                { day: "Fri", hrs: 2.0 },
+                { day: "Sat", hrs: 4.5 },
+                { day: "Sun", hrs: 1.5 }
+              ].map((d, idx) => {
+                const heightPct = (d.hrs / 5) * 100;
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                    <div className="relative w-full flex justify-center">
+                      {/* Tooltip */}
+                      <span className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-accent text-background text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                        {d.hrs}h
+                      </span>
+                      <div
+                        className="w-full bg-accent/20 border border-accent/45 hover:bg-accent/40 rounded-t-sm transition-all duration-500 ease-out"
+                        style={{ height: `${heightPct}%`, minHeight: "4px" }}
+                      />
+                    </div>
+                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider">{d.day}</span>
+                  </div>
+                );
+              })}
+              <div className="absolute left-0 top-0 text-[8px] text-text-muted">5h</div>
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[8px] text-text-muted">2.5h</div>
+            </div>
+          </div>
+
+          {/* Subject performance trend */}
+          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+              <TrendingUp className="h-4.5 w-4.5 text-accent animate-pulse" />
+              <span>Score Progression Trend</span>
+            </h3>
+
+            <div className="h-36 w-full bg-background/25 rounded-lg border border-border-default/20 relative flex items-end p-2">
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                {/* Grid Lines */}
-                <line x1="0" y1="20" x2="100" y2="20" stroke="var(--border-default)" strokeWidth="0.1" strokeDasharray="2" />
-                <line x1="0" y1="50" x2="100" y2="50" stroke="var(--border-default)" strokeWidth="0.1" strokeDasharray="2" />
-                <line x1="0" y1="80" x2="100" y2="80" stroke="var(--border-default)" strokeWidth="0.1" strokeDasharray="2" />
-                
-                {/* Trend line */}
+                <line x1="0" y1="30" x2="100" y2="30" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
+                <line x1="0" y1="60" x2="100" y2="60" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
                 <path
-                  d="M 5,80 Q 25,65 45,45 T 85,25"
+                  d="M 5,85 Q 25,60 45,40 T 95,15"
                   fill="none"
                   stroke="var(--accent)"
                   strokeWidth="2"
+                  className="animate-logo-draw"
                 />
-                
-                {/* Glow under line */}
-                <path
-                  d="M 5,80 Q 25,65 45,45 T 85,25 L 85,100 L 5,100 Z"
-                  fill="url(#grad)"
-                  opacity="0.1"
-                />
-                
-                <defs>
-                  <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="var(--accent)" />
-                    <stop offset="100%" stopColor="transparent" />
-                  </linearGradient>
-                </defs>
               </svg>
               <div className="absolute left-2 top-2 text-[8px] text-text-muted">100%</div>
               <div className="absolute left-2 bottom-2 text-[8px] text-text-muted">0%</div>
             </div>
             
-            <div className="flex justify-between items-center text-[10px] text-text-muted font-bold uppercase px-2">
+            <div className="flex justify-between items-center text-[9px] text-text-muted font-bold uppercase px-2">
               <span>Week 1</span>
               <span>Week 2</span>
               <span>Week 3</span>
@@ -106,61 +283,15 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Strength Areas */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
-            <h3 className="text-sm font-bold text-text-default uppercase tracking-wider">Strength Areas</h3>
-            <div className="space-y-3">
-              {strengths.map((s, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-text-default">{s.name}</span>
-                    <span className="text-green-400 font-bold">{s.score}% ({s.status})</span>
-                  </div>
-                  <div className="w-full bg-background/50 h-1.5 rounded-full overflow-hidden border border-border-default/45">
-                    <div className="bg-green-500 h-full rounded-full" style={{ width: `${s.score}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column - Weakness Areas & AI recommendations (40%) */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Areas for Improvement */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
-            <h3 className="text-sm font-bold text-[#FF6B9D] uppercase tracking-wider">Areas for Improvement</h3>
-            
-            <div className="space-y-3">
-              {weaknesses.map((w, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-text-default">{w.name}</span>
-                    <span className="text-[#FF6B9D] font-bold">{w.score}% ({w.status})</span>
-                  </div>
-                  <div className="w-full bg-background/50 h-1.5 rounded-full overflow-hidden border border-border-default/45">
-                    <div className="bg-[#FF6B9D] h-full rounded-full" style={{ width: `${w.score}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* AI recommendations */}
-          <div className="rounded-xl border border-accent/20 bg-accent/5 p-5 md:p-6 space-y-4">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-text-default">
+          {/* Orbis recommendations */}
+          <div className="rounded-xl border border-accent/25 bg-accent/5 p-5 md:p-6 space-y-4">
+            <h3 className="flex items-center gap-2 text-xs font-bold text-text-default">
               <Sparkles className="h-4.5 w-4.5 text-accent animate-pulse" />
-              <span>Orbis Study Suggestion</span>
+              <span>Orbis Performance Insights</span>
             </h3>
-
             <p className="text-xs text-text-muted leading-relaxed">
-              Based on your recent quiz attempts, your accuracy in balancing Chemical equations is dropping. We suggest setting aside 15 mins today to review the chemistry notes.
+              Your average score sits at **78% (ME1)**. You are exceeding expectations in **Physics** and **Integrated Science**. Let&apos;s boost your Mathematics score by completing the Daily Challenge quiz.
             </p>
-
-            <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white py-2 text-xs font-bold shadow-md transition-colors active-press">
-              <BookOpen className="h-4 w-4" />
-              <span>Open Chemistry Sub-Strand</span>
-            </button>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -24,6 +24,21 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const [studentName, setStudentName] = useState("Learner");
+  const [greeting, setGreeting] = useState("Welcome");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("edupal-name");
+      if (name) setStudentName(name);
+
+      const hrs = new Date().getHours();
+      if (hrs < 12) setGreeting("Good morning");
+      else if (hrs < 18) setGreeting("Good afternoon");
+      else setGreeting("Good evening");
+    }
+  }, []);
+
   // Daily Challenge State
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -75,9 +90,9 @@ export default function DashboardPage() {
             EduPal • Powered by Orbis AI
           </span>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-text-default">
-            Welcome to{" "}
+            {greeting},{" "}
             <span className="bg-gradient-to-r from-[#FF6B9D] via-[#A855F7] to-[#3B82F6] bg-clip-text text-transparent">
-              EduPal
+              {studentName}
             </span>
           </h1>
           <p className="text-sm md:text-base text-text-muted leading-relaxed">

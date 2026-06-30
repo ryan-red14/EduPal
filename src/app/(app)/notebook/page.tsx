@@ -1,18 +1,82 @@
 "use client";
 
-import React, { useState } from "react";
-import { Folder, FileText, Plus, Pin, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Folder, FileText, Plus, Pin, Search, Trash2 } from "lucide-react";
+
+interface Note {
+  id: string;
+  title: string;
+  folder: string;
+  content: string;
+  date: string;
+  pinned: boolean;
+}
 
 export default function NotebookPage() {
-  const [notes, setNotes] = useState([
-    { id: "1", title: "Physics: Waves Formula Sheet", folder: "Science", date: "June 29, 2026", pinned: true },
-    { id: "2", title: "Biology: Photosynthesis Summary", folder: "Science", date: "June 28, 2026", pinned: true },
-    { id: "3", title: "Chemistry: Covalent Bonding Properties", folder: "Science", date: "June 27, 2026", pinned: false },
-    { id: "4", title: "History: Cold War Causes", folder: "Social Studies", date: "June 25, 2026", pinned: false },
-  ]);
-
-  const [activeNote, setActiveNote] = useState<string>("2");
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [activeNote, setActiveNote] = useState<string>("");
   const [search, setSearch] = useState("");
+  const [saveStatus, setSaveStatus] = useState("Saved locally");
+
+  // Load notes on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("edupal-notes");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setNotes(parsed);
+        if (parsed.length > 0) setActiveNote(parsed[0].id);
+      } else {
+        const defaultNotes: Note[] = [
+          { id: "1", title: "Physics: Waves Formula Sheet", folder: "Science", content: "⚡ Waves Properties:\n\n- Wave Equation: v = f * λ\n- Rectilinear Propagation: waves travel in straight lines.\n- Refraction: change in speed when entering different density.", date: "Jun 29, 2026", pinned: true },
+          { id: "2", title: "Biology: Photosynthesis Summary", folder: "Science", content: "🌿 Photosynthesis Summary\n\n- Chlorophyll absorbs blue and red wavelengths.\n- Light-dependent reactions split water molecules (Photolysis) releasing oxygen.\n- Light-independent reactions (Calvin Cycle) fix carbon dioxide into glucose.", date: "Jun 28, 2026", pinned: true },
+          { id: "3", title: "Chemistry: Covalent Bonding Properties", folder: "Science", content: "🧪 Covalent bonding occurs when non-metal atoms share electron pairs to reach stable configurations.\n- Low melting points\n- Poor electrical conductivity in any phase", date: "Jun 27, 2026", pinned: false },
+        ];
+        setNotes(defaultNotes);
+        setActiveNote("2");
+        localStorage.setItem("edupal-notes", JSON.stringify(defaultNotes));
+      }
+    }
+  }, []);
+
+  const saveNotes = (newNotes: Note[]) => {
+    setNotes(newNotes);
+    localStorage.setItem("edupal-notes", JSON.stringify(newNotes));
+    setSaveStatus("Saving...");
+    setTimeout(() => {
+      setSaveStatus("All changes saved");
+    }, 400);
+  };
+
+  const handleCreateNote = () => {
+    const newNote: Note = {
+      id: Math.random().toString(),
+      title: "Untitled Note",
+      folder: "General",
+      content: "",
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      pinned: false,
+    };
+    const updated = [newNote, ...notes];
+    saveNotes(updated);
+    setActiveNote(newNote.id);
+  };
+
+  const handleDeleteNote = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = notes.filter((n) => n.id !== id);
+    saveNotes(updated);
+    if (activeNote === id && updated.length > 0) {
+      setActiveNote(updated[0].id);
+    } else if (updated.length === 0) {
+      setActiveNote("");
+    }
+  };
+
+  const handleUpdateNote = (id: string, updates: Partial<Note>) => {
+    const updated = notes.map((n) => (n.id === id ? { ...n, ...updates } : n));
+    saveNotes(updated);
+  };
 
   const activeContent = notes.find((n) => n.id === activeNote);
 
@@ -29,17 +93,7 @@ export default function NotebookPage() {
           </p>
         </div>
         <button
-          onClick={() => {
-            const newNote = {
-              id: (notes.length + 1).toString(),
-              title: "Untitled Note",
-              folder: "General",
-              date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-              pinned: false,
-            };
-            setNotes([newNote, ...notes]);
-            setActiveNote(newNote.id);
-          }}
+          onClick={handleCreateNote}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white px-3.5 py-2 text-xs font-semibold shadow active-press transition-colors shrink-0"
         >
           <Plus className="h-4 w-4" />
@@ -62,7 +116,7 @@ export default function NotebookPage() {
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-2">
+          <div className="flex-1 overflow-y-auto space-y-2 max-h-[350px]">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block px-1">
               All Notes
             </span>
@@ -72,7 +126,7 @@ export default function NotebookPage() {
                 <button
                   key={note.id}
                   onClick={() => setActiveNote(note.id)}
-                  className={`flex w-full items-start gap-2.5 p-2 rounded-lg text-xs font-medium text-left transition-colors active-press ${
+                  className={`flex w-full items-start gap-2.5 p-2 rounded-lg text-xs font-medium text-left transition-colors active-press group ${
                     activeNote === note.id
                       ? "bg-accent/15 text-accent border border-accent/15"
                       : "hover:bg-background/40 text-text-default"
@@ -82,7 +136,16 @@ export default function NotebookPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
                       <p className="font-bold truncate">{note.title}</p>
-                      {note.pinned && <Pin className="h-3 w-3 text-accent fill-accent shrink-0" />}
+                      <div className="flex items-center gap-1 shrink-0">
+                        {note.pinned && <Pin className="h-3 w-3 text-accent fill-accent" />}
+                        <button
+                          onClick={(e) => handleDeleteNote(note.id, e)}
+                          className="opacity-0 group-hover:opacity-100 p-0.5 text-text-muted hover:text-passion transition-all"
+                          title="Delete Note"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </div>
                     <div className="flex justify-between items-center text-[10px] text-text-muted mt-0.5">
                       <span className="flex items-center gap-1 font-semibold">
@@ -105,23 +168,20 @@ export default function NotebookPage() {
                 <input
                   type="text"
                   value={activeContent.title}
-                  onChange={(e) => {
-                    const titleVal = e.target.value;
-                    setNotes(notes.map((n) => (n.id === activeNote ? { ...n, title: titleVal } : n)));
-                  }}
+                  onChange={(e) => handleUpdateNote(activeNote, { title: e.target.value })}
                   className="text-lg font-bold bg-transparent text-text-default border-none focus:outline-none flex-1 min-w-0"
                 />
-                <span className="text-[10px] font-bold text-text-muted border border-border-default px-2 py-0.5 rounded-full capitalize">
-                  {activeContent.folder}
-                </span>
+                <input
+                  type="text"
+                  value={activeContent.folder}
+                  onChange={(e) => handleUpdateNote(activeNote, { folder: e.target.value })}
+                  className="text-[10px] font-bold text-accent border border-border-default/60 bg-background/50 px-2.5 py-0.5 rounded-full capitalize focus:outline-none"
+                />
               </div>
               <textarea
                 placeholder="Type your notes here..."
-                defaultValue={
-                  activeContent.id === "2"
-                    ? "🌿 Photosynthesis Summary\n\n- Chlorophyll absorbs blue and red wavelengths.\n- Light-dependent reactions split water molecules (Photolysis) releasing oxygen.\n- Light-independent reactions (Calvin Cycle) fix carbon dioxide into glucose.\n\nCreated with Orbis AI Assistant."
-                    : ""
-                }
+                value={activeContent.content}
+                onChange={(e) => handleUpdateNote(activeNote, { content: e.target.value })}
                 className="w-full flex-1 min-h-[250px] bg-transparent text-sm text-text-default placeholder:text-text-muted/65 focus:outline-none resize-none"
               />
             </div>
@@ -132,7 +192,7 @@ export default function NotebookPage() {
           )}
           
           <div className="text-[10px] text-text-muted pt-2 border-t border-border-default/20 text-right">
-            Auto-saves locally
+            {saveStatus}
           </div>
         </div>
       </div>

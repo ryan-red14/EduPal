@@ -8,7 +8,8 @@ export type Theme =
   | "heritage" 
   | "horizon" 
   | "forest" 
-  | "classic-light";
+  | "classic-light"
+  | "tech";
 
 interface ThemeContextType {
   theme: Theme;
@@ -37,7 +38,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     const savedFont = localStorage.getItem("edupal-font");
-    if (savedFont) setFontFamilyState(savedFont);
+    if (savedFont) {
+      setFontFamilyState(savedFont);
+      applyFontFamily(savedFont);
+    } else {
+      applyFontFamily("inter");
+    }
 
     const savedFontSize = localStorage.getItem("edupal-font-size") as any;
     if (savedFontSize) setFontSizeState(savedFontSize);
@@ -52,10 +58,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       "theme-heritage",
       "theme-horizon",
       "theme-forest",
-      "theme-classic-light"
+      "theme-classic-light",
+      "theme-tech"
     );
     // Add new theme class
     root.classList.add(`theme-${newTheme}`);
+  };
+
+  const applyFontFamily = (font: string) => {
+    if (typeof window !== "undefined") {
+      document.body.style.fontFamily = `var(--font-${font}), sans-serif`;
+    }
   };
 
   const setTheme = (newTheme: Theme) => {
@@ -67,6 +80,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setFontFamily = (font: string) => {
     setFontFamilyState(font);
     localStorage.setItem("edupal-font", font);
+    applyFontFamily(font);
   };
 
   const setFontSize = (size: "small" | "default" | "large" | "extra-large") => {
@@ -86,10 +100,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, fontFamily, setFontFamily, fontSize, setFontSize }}>
-      <div 
-        className={getFontSizeClass()} 
-        style={{ fontFamily: `var(--font-${fontFamily}), sans-serif` }}
-      >
+      <div className={getFontSizeClass()}>
         {children}
       </div>
     </ThemeContext.Provider>
