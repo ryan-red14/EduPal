@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-text-default: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border-default: var(--border-default);
+
+  /* Constant brand colors */
+  --color-passion: #EF4444;
+  --color-wisdom: #A855F7;
+  --color-trust: #3B82F6;
+  --color-growth: #10B981;
+  --color-gold-accent: #D4A017;
+  
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+/* Global css variables for theme palettes */
+:root, .theme-scholar {
+  --background: #111827;
+  --surface: #1F2937;
+  --primary: #1E3A8A;
+  --secondary: #4338CA;
+  --accent: #D4AF37;
+  --text: #E5E7EB;
+  --text-muted: #9CA3AF;
+  --border-default: #374151;
+}
+
+.theme-midnight {
+  --background: #0B1220;
+  --surface: #1E293B;
+  --primary: #0D1B2A;
+  --secondary: #1B263B;
+  --accent: #10B981;
+  --text: #E5E7EB;
+  --text-muted: #94A3B8;
+  --border-default: #334155;
+}
+
+.theme-heritage {
+  --background: #0B1020;
+  --surface: #1E293B;
+  --primary: #7F1D1D;
+  --secondary: #0F172A;
+  --accent: #D4AF37;
+  --text: #F1F5F9;
+  --text-muted: #94A3B8;
+  --border-default: #334155;
+}
+
+.theme-horizon {
+  --background: #0E0F1A;
+  --surface: #1F1A3A;
+  --primary: #4F46E5;
+  --secondary: #7C3AED;
+  --accent: #C4B5FD;
+  --text: #E5E7EB;
+  --text-muted: #9E9EAF;
+  --border-default: #2D2F54;
+}
+
+.theme-forest {
+  --background: #0B1A0E;
+  --surface: #1B2A1E;
+  --primary: #156534;
+  --secondary: #365E3B;
+  --accent: #B68D57;
+  --text: #E5E7EB;
+  --text-muted: #94A198;
+  --border-default: #2A3A2F;
+}
+
+.theme-classic-light {
+  --background: #FFFFFF;
+  --surface: #F1F5F9;
+  --primary: #1E3A8A;
+  --secondary: #64748B;
+  --accent: #D4AF37;
+  --text: #0F172A;
+  --text-muted: #475569;
+  --border-default: #CBD5E1;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: var(--font-inter);
+  transition: background-color 300ms ease, color 300ms ease;
+  overflow-x: hidden;
+}
+
+/* Custom Utilities for smooth animations and transitions */
+.hover-bloom {
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.active-press {
+  transition: transform 150ms ease;
+}
+.active-press:active {
+  transform: scale(0.97);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Keyframes and Animations for layout */
+@keyframes slide-right {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-right {
+  animation: slide-right 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Page fade up animation for stagger */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
