@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, CircleUserRound, Palette, Type, Search } from "lucide-react";
+import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, Palette, Type, Search } from "lucide-react";
 import { Theme, useTheme } from "@/components/shared/ThemeProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
+
+type SeniorPathway = "STEM" | "Social Sciences" | "Arts & Sports";
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,6 +20,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [commandSearch, setCommandSearch] = useState("");
   
@@ -26,12 +29,17 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [studentAge, setStudentAge] = useState("");
   const [studentSchool, setStudentSchool] = useState("");
   const [studentGrade, setStudentGrade] = useState("8"); // Default Junior Grade
-  const [selectedPathway, setSelectedPathway] = useState<"STEM" | "Social Sciences" | "Arts & Sports" | "">("");
+  const [selectedPathway, setSelectedPathway] = useState<SeniorPathway | "">("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [academicGoal, setAcademicGoal] = useState("");
   const [careerGoal, setCareerGoal] = useState("");
   
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme();
+  const gradeNum = Number.parseInt(studentGrade, 10);
+  const isSeniorGrade = gradeNum >= 10;
+  const totalOnboardingSteps = isSeniorGrade ? 6 : 4;
+  const goalsStep = isSeniorGrade ? 5 : 3;
+  const appearanceStep = totalOnboardingSteps;
 
   // Listen for Ctrl+K
   useEffect(() => {
@@ -49,86 +57,93 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   // Handle page loading skeleton transition on route changes
   useEffect(() => {
     if (isMounted) {
-      setIsLoadingPage(true);
-      const timer = setTimeout(() => {
+      const startTimer = setTimeout(() => {
+        setIsLoadingPage(true);
+      }, 0);
+      const stopTimer = setTimeout(() => {
         setIsLoadingPage(false);
       }, 500); // Enforced 500ms skeleton load
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(startTimer);
+        clearTimeout(stopTimer);
+      };
     }
-  }, [pathname]);
+  }, [isMounted, pathname]);
 
   useEffect(() => {
-    setIsMounted(true);
-    
-    // Check onboarding status
-    const onboarded = localStorage.getItem("edupal-onboarded") === "true";
-    if (onboarded) {
-      setShowOnboarding(false);
-    } else {
-      setShowOnboarding(true);
-    }
+    const setupTimer = setTimeout(() => {
+      setIsMounted(true);
+
+      const onboarded = localStorage.getItem("edupal-onboarded") === "true";
+      setShowOnboarding(!onboarded);
+    }, 0);
 
     // Hide splash after 2.5s
-    const timer = setTimeout(() => {
+    const splashTimer = setTimeout(() => {
       setShowSplash(false);
     }, 2500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(setupTimer);
+      clearTimeout(splashTimer);
+    };
   }, []);
 
   const handleNextStep = () => {
-    // If Grade 7-9 (Junior School) is selected, skip Pathway and Elective Subject selection
-    if (onboardingStep === 2) {
-      const gradeNum = parseInt(studentGrade);
-      if (gradeNum >= 7 && gradeNum <= 9) {
-        // Jump to Step 5 (Goals) directly
-        setOnboardingStep(5);
-        return;
-      }
-    }
-    setOnboardingStep((prev) => prev + 1);
+    setOnboardingStep((prev) => Math.min(prev + 1, totalOnboardingSteps));
   };
 
   const handlePrevStep = () => {
-    if (onboardingStep === 5) {
-      const gradeNum = parseInt(studentGrade);
-      if (gradeNum >= 7 && gradeNum <= 9) {
-        setOnboardingStep(2);
-        return;
-      }
-    }
-    setOnboardingStep((prev) => prev - 1);
+    setOnboardingStep((prev) => Math.max(prev - 1, 1));
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem("edupal-onboarded", "true");
-    localStorage.setItem("edupal-name", studentName || "Learner");
-    localStorage.setItem("edupal-grade", studentGrade);
-    localStorage.setItem("edupal-school", studentSchool || "Our Lady Queen of Peace");
-    localStorage.setItem("edupal-pathway", selectedPathway || "STEM");
-    localStorage.setItem("edupal-academic-goal", academicGoal || "Excel in science & prepare for exams");
-    localStorage.setItem("edupal-career-goal", careerGoal || "Software Engineer");
-    
-    // Save selected subjects based on grade
-    const gradeNum = parseInt(studentGrade);
-    if (gradeNum >= 7 && gradeNum <= 9) {
-      const compulsory = ["English", "Kiswahili", "Mathematics", "Integrated Science", "Agriculture", "Social Studies", "CRE", "Creative Arts & Sports", "Pre-technical Studies"];
-      localStorage.setItem("edupal-subjects", JSON.stringify(compulsory));
-    } else {
-      const core = ["English", "Kiswahili", "Core Mathematics", "CSL"];
-      localStorage.setItem("edupal-subjects", JSON.stringify([...core, ...selectedSubjects]));
+    setIsCompletingOnboarding(true);
+
+    try {
+      localStorage.setItem("edupal-onboarded", "true");
+      localStorage.setItem("edupal-name", studentName || "Learner");
+      localStorage.setItem("edupal-grade", studentGrade);
+      localStorage.setItem("edupal-school", studentSchool || "Our Lady Queen of Peace");
+      localStorage.setItem("edupal-pathway", selectedPathway || "STEM");
+      localStorage.setItem("edupal-academic-goal", academicGoal || "Excel in science & prepare for exams");
+      localStorage.setItem("edupal-career-goal", careerGoal || "Software Engineer");
+
+      if (isSeniorGrade) {
+        const core = ["English", "Kiswahili", "Core Mathematics", "CSL"];
+        localStorage.setItem("edupal-subjects", JSON.stringify([...core, ...selectedSubjects]));
+      } else {
+        const compulsory = ["English", "Kiswahili", "Mathematics", "Integrated Science", "Agriculture", "Social Studies", "CRE", "Creative Arts & Sports", "Pre-technical Studies"];
+        localStorage.setItem("edupal-subjects", JSON.stringify(compulsory));
+      }
+
+      setShowOnboarding(false);
+      router.replace("/dashboard");
+    } finally {
+      setIsCompletingOnboarding(false);
     }
-    
-    // Trigger reload or state change to update welcome message
-    setShowOnboarding(false);
-    window.location.reload();
   };
 
-  const seniorElectives = {
+  const seniorElectives: Record<SeniorPathway, string[]> = {
     "STEM": ["Biology", "Chemistry", "Physics", "Computer Studies", "Agriculture", "Aviation"],
     "Social Sciences": ["Literature in English", "Fasihi ya Kiswahili", "History and Citizenship", "Geography", "Business Studies"],
     "Arts & Sports": ["Sports and Recreation", "Music and Dance", "Theatre and Film", "Fine Arts"]
   };
+
+  const seniorPathways: { id: SeniorPathway; desc: string }[] = [
+    { id: "STEM", desc: "Science, Technology, Engineering & Mathematics" },
+    { id: "Social Sciences", desc: "Humanities, Languages, and Business Studies" },
+    { id: "Arts & Sports", desc: "Performing Arts, Fine Arts, and Sports Sciences" }
+  ];
+
+  const themeOptions: { id: Theme; name: string; color: string }[] = [
+    { id: "scholar", name: "Scholar", color: "bg-[#D4AF37]" },
+    { id: "midnight", name: "Midnight", color: "bg-[#10B981]" },
+    { id: "tech", name: "Tech", color: "bg-[#14B8A6]" },
+    { id: "heritage", name: "Heritage", color: "bg-[#7F1D1D]" },
+    { id: "horizon", name: "Horizon", color: "bg-[#C4B5FD]" },
+    { id: "classic-light", name: "Light", color: "bg-[#1E3A8A]" },
+  ];
 
   const toggleSubject = (sub: string) => {
     if (selectedSubjects.includes(sub)) {
@@ -218,11 +233,11 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
         <div className="w-full max-w-xl bg-surface border border-border-default rounded-2xl shadow-2xl p-6 md:p-8 space-y-6 animate-fade-up max-h-[90vh] overflow-y-auto">
           {/* Top Progress bar */}
           <div className="flex justify-between items-center text-[10px] font-bold text-text-muted uppercase tracking-wider">
-            <span>Step {onboardingStep} of {studentGrade && parseInt(studentGrade) >= 10 ? 6 : 4}</span>
+            <span>Step {onboardingStep} of {totalOnboardingSteps}</span>
             <div className="flex gap-1.5 h-1.5 w-32 bg-background border border-border-default/40 rounded-full overflow-hidden">
               <div 
                 className="bg-accent h-full rounded-full transition-all duration-300"
-                style={{ width: `${(onboardingStep / (studentGrade && parseInt(studentGrade) >= 10 ? 6 : 4)) * 100}%` }}
+                style={{ width: `${(onboardingStep / totalOnboardingSteps) * 100}%` }}
               />
             </div>
           </div>
@@ -316,20 +331,16 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </div>
           )}
 
-          {onboardingStep === 3 && parseInt(studentGrade) >= 10 && (
+          {onboardingStep === 3 && isSeniorGrade && (
             <div className="space-y-4 animate-fade-in">
               <h3 className="text-lg font-bold text-text-default">Select Senior Pathway</h3>
               <p className="text-xs text-text-muted">Choose your academic pathway clusters from KICD:</p>
               <div className="grid grid-cols-1 gap-2.5">
-                {[
-                  { id: "STEM", desc: "Science, Technology, Engineering & Mathematics" },
-                  { id: "Social Sciences", desc: "Humanities, Languages, and Business Studies" },
-                  { id: "Arts & Sports", desc: "Performing Arts, Fine Arts, and Sports Sciences" }
-                ].map((path) => (
+                {seniorPathways.map((path) => (
                   <button
                     key={path.id}
                     onClick={() => {
-                      setSelectedPathway(path.id as any);
+                      setSelectedPathway(path.id);
                       setSelectedSubjects([]);
                     }}
                     className={`p-3.5 rounded-xl border text-left transition-all active-press ${
@@ -346,7 +357,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </div>
           )}
 
-          {onboardingStep === 4 && parseInt(studentGrade) >= 10 && (
+          {onboardingStep === 4 && isSeniorGrade && (
             <div className="space-y-4 animate-fade-in">
               <h3 className="text-lg font-bold text-text-default">Select Elective Subjects</h3>
               <p className="text-xs text-text-muted">Select your electives under the <strong>{selectedPathway}</strong> pathway:</p>
@@ -371,7 +382,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </div>
           )}
 
-          {onboardingStep === 5 && (
+          {onboardingStep === goalsStep && (
             <div className="space-y-4 animate-fade-in">
               <h3 className="text-lg font-bold text-text-default">Goals & Ambitions</h3>
               <div className="space-y-3.5">
@@ -400,7 +411,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </div>
           )}
 
-          {onboardingStep === (studentGrade && parseInt(studentGrade) >= 10 ? 6 : 4) && (
+          {onboardingStep === appearanceStep && (
             <div className="space-y-5 animate-fade-in">
               <h3 className="text-lg font-bold text-text-default">Appearance Preferences</h3>
               
@@ -411,17 +422,10 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                   <span>Choose Theme</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: "scholar", name: "Scholar", color: "bg-[#D4AF37]" },
-                    { id: "midnight", name: "Midnight", color: "bg-[#10B981]" },
-                    { id: "tech", name: "Tech", color: "bg-[#14B8A6]" },
-                    { id: "heritage", name: "Heritage", color: "bg-[#7F1D1D]" },
-                    { id: "horizon", name: "Horizon", color: "bg-[#C4B5FD]" },
-                    { id: "classic-light", name: "Light", color: "bg-[#1E3A8A]" },
-                  ].map((t) => (
+                  {themeOptions.map((t) => (
                     <button
                       key={t.id}
-                      onClick={() => setTheme(t.id as any)}
+                      onClick={() => setTheme(t.id)}
                       className={`flex items-center gap-1.5 p-2 rounded-lg border text-[10px] font-bold transition-all active-press ${
                         theme === t.id ? "border-accent bg-accent/5 text-accent" : "border-border-default bg-background/40 text-text-default"
                       }`}
@@ -475,12 +479,13 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               <div />
             )}
 
-            {onboardingStep === (studentGrade && parseInt(studentGrade) >= 10 ? 6 : 4) ? (
+            {onboardingStep === totalOnboardingSteps ? (
               <button
                 onClick={handleCompleteOnboarding}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white px-5 py-2 text-xs font-bold shadow-md active-press transition-colors"
+                disabled={isCompletingOnboarding}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white px-5 py-2 text-xs font-bold shadow-md active-press transition-colors disabled:opacity-40"
               >
-                <span>Enter Workspace</span>
+                <span>{isCompletingOnboarding ? "Entering..." : "Enter Workspace"}</span>
                 <CheckCircle2 className="h-4 w-4" />
               </button>
             ) : (
