@@ -162,7 +162,7 @@ export default function DashboardPage() {
                   <Link
                     key={idx}
                     href={item.route}
-                    className="group flex items-center justify-between p-3.5 rounded-lg border border-border-default/40 bg-background/20 hover:bg-primary/5 hover:border-primary/40 active-press transition-all"
+                    className="group flex items-center justify-between p-3.5 rounded-lg border border-border-default/40 bg-background/20 hover:bg-primary/5 hover:border-primary/40 active-press transition-all hover-bloom hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.iconBg} ${item.iconColor}`}>

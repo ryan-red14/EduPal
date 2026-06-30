@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Briefcase, Bookmark, Award, Sparkles, CheckCircle2, AlertCircle, Search, HelpCircle } from "lucide-react";
+import { Briefcase, Bookmark, Award, Sparkles, CheckCircle2, AlertCircle, Search } from "lucide-react";
 import Link from "next/link";
 
 interface Career {
@@ -23,7 +23,7 @@ export default function CareerTrackingPage() {
       id: "1",
       name: "Electrical Engineer",
       category: "Science",
-      description: "Design, develop, test, and supervise the manufacture of electrical equipment.",
+      description: "Design, develop, test, and supervise the manufacture of electrical equipment and power systems.",
       requiredSubjects: ["Mathematics", "Physics", "Chemistry"],
       recommendedSkills: ["Circuit Design", "Problem Solving", "CAD Modeling", "Python Programming"],
       missingSkills: ["CAD Modeling", "Python Programming"],
@@ -35,7 +35,7 @@ export default function CareerTrackingPage() {
       id: "2",
       name: "Data Scientist",
       category: "Science",
-      description: "Analyze and interpret complex digital data to assist in decision-making.",
+      description: "Analyze and interpret complex digital data to assist organizations in decision-making and AI modeling.",
       requiredSubjects: ["Mathematics", "Physics", "Computer Studies"],
       recommendedSkills: ["Python Programming", "Statistics", "Machine Learning", "Data Visualization"],
       missingSkills: ["Machine Learning", "Statistics"],
@@ -45,26 +45,74 @@ export default function CareerTrackingPage() {
     },
     {
       id: "3",
-      name: "Agricultural Economist",
-      category: "Agriculture",
-      description: "Apply economic principles to optimize agricultural production and distribution.",
-      requiredSubjects: ["Agriculture", "Mathematics", "Business Studies"],
-      recommendedSkills: ["Data Analysis", "Agribusiness Management", "Market Research"],
-      missingSkills: ["Agribusiness Management"],
-      progress: 80,
-      pathway: "B.Sc. in Agricultural Economics",
+      name: "Medical Doctor",
+      category: "Science",
+      description: "Diagnose, treat, and prevent human illnesses, diseases, and injuries in clinical environments.",
+      requiredSubjects: ["Biology", "Chemistry", "Physics", "Mathematics"],
+      recommendedSkills: ["Clinical Diagnosis", "Patient Care", "Medical Ethics", "Critical Thinking"],
+      missingSkills: ["Clinical Diagnosis", "Medical Ethics"],
+      progress: 70,
+      pathway: "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
       isSaved: true,
     },
     {
       id: "4",
-      name: "Environmental Analyst",
+      name: "Software Engineer",
+      category: "Science",
+      description: "Apply engineering principles to build computer applications, systems, and network architectures.",
+      requiredSubjects: ["Mathematics", "Computer Studies", "Physics"],
+      recommendedSkills: ["Algorithm Design", "TypeScript/NextJS", "Databases", "Version Control"],
+      missingSkills: ["Version Control"],
+      progress: 85,
+      pathway: "B.Sc. in Software Engineering or Computer Science",
+      isSaved: true,
+    },
+    {
+      id: "5",
+      name: "Agronomist",
+      category: "Agriculture",
+      description: "Specialist in crop production and soil management, working to optimize agricultural output and food security.",
+      requiredSubjects: ["Agriculture", "Biology", "Chemistry"],
+      recommendedSkills: ["Soil Science", "Crop Protection", "Irrigation Systems", "Agribusiness"],
+      missingSkills: ["Irrigation Systems"],
+      progress: 90,
+      pathway: "B.Sc. in Agriculture or Dryland Agriculture",
+      isSaved: false,
+    },
+    {
+      id: "6",
+      name: "Commercial Lawyer",
       category: "Social Sciences",
-      description: "Conduct research and analyze data to assess environmental impacts of human activity.",
-      requiredSubjects: ["Geography", "Biology", "Chemistry"],
-      recommendedSkills: ["GIS Mapping", "Environmental Law", "Scientific Writing"],
-      missingSkills: ["GIS Mapping", "Environmental Law"],
-      progress: 45,
-      pathway: "B.Sc. in Environmental Sciences",
+      description: "Provide legal advice, draft commercial contracts, and represent business entities in disputes.",
+      requiredSubjects: ["English", "Kiswahili", "History and Citizenship"],
+      recommendedSkills: ["Contract Law", "Legal Drafting", "Advocacy", "Negotiation"],
+      missingSkills: ["Contract Law", "Legal Drafting"],
+      progress: 60,
+      pathway: "Bachelor of Laws (LLB) + Kenya School of Law Diploma",
+      isSaved: false,
+    },
+    {
+      id: "7",
+      name: "Chartered Accountant",
+      category: "Business",
+      description: "Manage corporate financial accounting, auditing, taxation audit trails, and financial planning.",
+      requiredSubjects: ["Core Mathematics", "Business Studies"],
+      recommendedSkills: ["Financial Auditing", "Excel modeling", "Tax Compliance", "Corporate Finance"],
+      missingSkills: ["Financial Auditing"],
+      progress: 75,
+      pathway: "B.Com in Accounting + CPA (K) Certification",
+      isSaved: false,
+    },
+    {
+      id: "8",
+      name: "Secondary School Teacher",
+      category: "Social Sciences",
+      description: "Educate high school students in specific subject areas matching curriculum standards.",
+      requiredSubjects: ["English", "Kiswahili", "History", "Geography"],
+      recommendedSkills: ["Lesson Planning", "Classroom Management", "CBC Pedagogy", "Student Evaluation"],
+      missingSkills: ["CBC Pedagogy"],
+      progress: 80,
+      pathway: "Bachelor of Education (Arts/Science) or Post-Graduate PGDE",
       isSaved: false,
     },
   ]);
@@ -117,7 +165,7 @@ export default function CareerTrackingPage() {
               <div
                 key={c.id}
                 onClick={() => setActiveCareerId(c.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer hover:shadow-sm active-press flex flex-col gap-2.5 ${
+                className={`p-4 rounded-xl border transition-all cursor-pointer hover-bloom active-press flex flex-col gap-2.5 ${
                   activeCareerId === c.id
                     ? "border-accent bg-accent/5"
                     : "border-border-default bg-surface hover:border-text-muted/40"
@@ -161,7 +209,7 @@ export default function CareerTrackingPage() {
         {/* Right Column - Career Requirements and Details (60%) */}
         <div className="lg:col-span-3">
           {activeCareer ? (
-            <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-6 animate-fade-in">
+            <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-6 animate-fade-in hover-bloom hover:border-accent/30 shadow-md">
               {/* Profile status summary */}
               <div className="flex justify-between items-start border-b border-border-default/30 pb-4 gap-4">
                 <div>

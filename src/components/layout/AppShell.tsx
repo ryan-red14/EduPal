@@ -2,17 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, CircleUserRound, Palette, Type } from "lucide-react";
+import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, CircleUserRound, Palette, Type, Search } from "lucide-react";
 import { Theme, useTheme } from "@/components/shared/ThemeProvider";
+import { usePathname, useRouter } from "next/navigation";
+import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
   
-  // Splash and Onboarding States
+  // Splash, Onboarding, Command Palette and Loading States
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [commandSearch, setCommandSearch] = useState("");
   
   // Onboarding Form States
   const [studentName, setStudentName] = useState("");
@@ -25,6 +32,30 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [careerGoal, setCareerGoal] = useState("");
   
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme();
+
+  // Listen for Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setShowCommandPalette((prev) => !prev);
+        setCommandSearch("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Handle page loading skeleton transition on route changes
+  useEffect(() => {
+    if (isMounted) {
+      setIsLoadingPage(true);
+      const timer = setTimeout(() => {
+        setIsLoadingPage(false);
+      }, 500); // Enforced 500ms skeleton load
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -105,6 +136,31 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     } else {
       setSelectedSubjects([...selectedSubjects, sub]);
     }
+  };
+
+  // Command palette options
+  const commandList = [
+    { title: "Go to Dashboard", route: "/dashboard", desc: "View study streak, daily challenge, and progress stats." },
+    { title: "Go to Curriculum Library", route: "/library", desc: "Study strands, view notes, watch videos, and take quizzes." },
+    { title: "Go to Orbis AI Assistant", route: "/orbis", desc: "Interactive AI homework solver and document summarizer." },
+    { title: "Go to Personal Notebook", route: "/notebook", desc: "Create, edit, and search study notes with auto-save." },
+    { title: "Go to Flashcards Deck", route: "/flashcards", desc: "Review vocabulary with 3D physical-style card flips." },
+    { title: "Go to Study Calendar", route: "/calendar", desc: "Schedule assignment deadlines and study slots." },
+    { title: "Go to Career Tracking", route: "/careers", desc: "Explore KCSE/KPSEA pathways and evaluate skill gaps." },
+    { title: "Go to Performance Analytics", route: "/analytics", desc: "View the official 2025 KJSEA Results Slip with grading rubrics." },
+    { title: "Go to Badges & Rank Portfolio", route: "/portfolio", desc: "Inspect unlocked consistency and effort badges." },
+    { title: "Go to Profile Settings", route: "/profile", desc: "Adjust appearance themes, sizes, and font-families." },
+  ];
+
+  const filteredCommands = commandList.filter(
+    (cmd) =>
+      cmd.title.toLowerCase().includes(commandSearch.toLowerCase()) ||
+      cmd.desc.toLowerCase().includes(commandSearch.toLowerCase())
+  );
+
+  const handleCommandSelect = (route: string) => {
+    setShowCommandPalette(false);
+    router.push(route);
   };
 
   if (!isMounted) return null;
@@ -445,7 +501,65 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   // 3. Normal App Shell
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background text-text-default font-inter">
+    <div className="flex h-screen w-screen overflow-hidden bg-background text-text-default font-inter relative">
+      {/* Floating Command Palette Trigger - Desktop only */}
+      <button 
+        onClick={() => { setShowCommandPalette(true); setCommandSearch(""); }}
+        className="hidden md:flex fixed top-4 right-6 z-40 items-center gap-2 rounded-full border border-border-default bg-surface/85 backdrop-blur-md px-3.5 py-1.5 text-xs text-text-muted hover:text-text-default hover:border-accent/40 shadow-sm transition-all active-press"
+      >
+        <Search className="h-3.5 w-3.5 text-accent" />
+        <span>Search command...</span>
+        <kbd className="bg-background border border-border-default/80 px-1.5 py-0.5 rounded text-[10px] font-bold">Ctrl+K</kbd>
+      </button>
+
+      {/* Command Palette Overlay Modal */}
+      {showCommandPalette && (
+        <div className="fixed inset-0 z-[150] flex items-start justify-center bg-black/60 backdrop-blur-sm p-4 pt-[10vh]">
+          <div 
+            className="fixed inset-0 bg-transparent" 
+            onClick={() => setShowCommandPalette(false)}
+          />
+          <div className="relative w-full max-w-lg bg-surface border border-border-default rounded-xl shadow-2xl overflow-hidden animate-fade-up">
+            <div className="p-4 border-b border-border-default/20 flex items-center gap-3">
+              <Search className="h-4.5 w-4.5 text-accent shrink-0" />
+              <input
+                type="text"
+                placeholder="Search tools, strands, notes, or pages..."
+                value={commandSearch}
+                onChange={(e) => setCommandSearch(e.target.value)}
+                className="w-full bg-transparent text-xs text-text-default border-none focus:outline-none"
+                autoFocus
+              />
+              <button 
+                onClick={() => setShowCommandPalette(false)}
+                className="text-[10px] font-bold text-text-muted bg-background border border-border-default/60 px-2 py-0.5 rounded uppercase hover:text-text-default"
+              >
+                esc
+              </button>
+            </div>
+
+            <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 bg-background/25">
+              {filteredCommands.length > 0 ? (
+                filteredCommands.map((cmd, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleCommandSelect(cmd.route)}
+                    className="w-full text-left p-3 rounded-lg flex flex-col gap-0.5 hover:bg-accent/10 border border-transparent hover:border-accent/20 transition-all text-xs active-press"
+                  >
+                    <p className="font-bold text-text-default">{cmd.title}</p>
+                    <p className="text-[10px] text-text-muted">{cmd.desc}</p>
+                  </button>
+                ))
+              ) : (
+                <div className="text-center py-8 text-xs text-text-muted">
+                  No matching shortcuts found.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar - Desktop */}
       <div className="hidden lg:block h-full shrink-0">
         <Sidebar />
@@ -494,9 +608,9 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           </div>
         </header>
 
-        {/* Dynamic page viewport */}
+        {/* Dynamic page viewport with Skeleton Transition Loader */}
         <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6 lg:p-8">
-          {children}
+          {isLoadingPage ? <SkeletonLoader /> : children}
         </main>
       </div>
     </div>

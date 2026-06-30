@@ -34,47 +34,47 @@
 }
 
 .theme-midnight {
-  --background: #0B1220;
-  --surface: #1E293B;
+  --background: #050912;
+  --surface: #0D1525;
   --primary: #0D1B2A;
   --secondary: #1F2937;
   --accent: #10B981;
   --text: #E2E8F0;
   --text-muted: #94A3B8;
-  --border-default: #334155;
+  --border-default: #1E293B;
 }
 
 .theme-forest {
-  --background: #0F1A14;
-  --surface: #1F2937;
+  --background: #050E07;
+  --surface: #0E2012;
   --primary: #166534;
   --secondary: #22C55E;
   --accent: #B8860B;
   --text: #E6E7EA;
   --text-muted: #94A198;
-  --border-default: #2A3A2F;
+  --border-default: #152A1C;
 }
 
 .theme-heritage {
-  --background: #120E0F;
-  --surface: #1F2937;
+  --background: #180406;
+  --surface: #2B0E11;
   --primary: #7F1D1D;
   --secondary: #1E3A8A;
   --accent: #D4A017;
   --text: #F8F9FA;
-  --text-muted: #94A3B8;
-  --border-default: #334155;
+  --text-muted: #B8A2A5;
+  --border-default: #4A1A1E;
 }
 
 .theme-horizon {
-  --background: #0D0B16;
-  --surface: #1F2937;
+  --background: #080610;
+  --surface: #160F25;
   --primary: #4F46E5;
   --secondary: #7C3AED;
   --accent: #C4B5FD;
   --text: #EDE9FE;
   --text-muted: #9E9EAF;
-  --border-default: #2D2F54;
+  --border-default: #342454;
 }
 
 .theme-classic-light {
@@ -89,14 +89,14 @@
 }
 
 .theme-tech {
-  --background: #0E0F13;
-  --surface: #1F2937;
+  --background: #05080E;
+  --surface: #0E1624;
   --primary: #14B8A6;
   --secondary: #334155;
   --accent: #22D3EE;
   --text: #E5E7EB;
   --text-muted: #94A3B8;
-  --border-default: #1E293B;
+  --border-default: #1B293E;
 }
 
 body {
