@@ -9,9 +9,13 @@ import {
   SendHorizontal,
   Bot,
   User,
-  CheckCircle,
   HelpCircle,
   FileText,
+  TrendingUp,
+  Target,
+  Trophy,
+  Code,
+  GraduationCap
 } from "lucide-react";
 
 interface Message {
@@ -30,6 +34,7 @@ function OrbisAIPageContent() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [activeOrbisSidebarTab, setActiveOrbisSidebarTab] = useState<"summary" | "goals" | "olympiad" | "coding" | "career">("summary");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -39,7 +44,6 @@ function OrbisAIPageContent() {
   }, [contextParam]);
 
   useEffect(() => {
-    // Scroll to bottom on new messages
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isThinking]);
 
@@ -64,35 +68,31 @@ function OrbisAIPageContent() {
     setInputValue("");
     setIsThinking(true);
 
-    // Simulate Orbis responding in 1.5 seconds
     setTimeout(() => {
       let responseContent = "";
       let responseActions: { label: string; action: string }[] = [];
 
       const query = textToSend.toLowerCase();
       if (query.includes("water cycle")) {
-        responseContent = "The **Water Cycle** (hydrological cycle) is the continuous movement of water on, above, and below the surface of the Earth. It involves four main stages:\n\n1. **Evaporation:** The sun heats water in oceans and rivers, turning it into water vapor.\n2. **Condensation:** Water vapor cools down in the atmosphere and forms clouds.\n3. **Precipitation:** Water falls back to earth as rain, snow, or hail.\n4. **Collection:** Water gathers in oceans, soil, and underground reservoirs, starting the process again.";
+        responseContent = "The **Water Cycle** is the continuous movement of water on, above, and below the Earth. It involves:\n\n1. **Evaporation:** Sun heats water bodies to form vapor.\n2. **Condensation:** Vapor cools to form clouds.\n3. **Precipitation:** Water falls back as rain or snow.\n4. **Collection:** Water gathers in soil and lakes.";
         responseActions = [
           { label: "Explain Simpler", action: "explain-simpler" },
-          { label: "Create Quiz", action: "create-quiz" },
-          { label: "Save to Notebook", action: "save-note" },
+          { label: "Save to Notebook", action: "save-note" }
         ];
       } else if (query.includes("photosynthesis")) {
-        responseContent = "🌿 **Photosynthesis** is the process by which green plants and some other organisms use sunlight to synthesize nutrients from carbon dioxide and water. In plants, photosynthesis generally involves the green pigment chlorophyll and generates oxygen as a byproduct.\n\n* **Equation:** `6CO₂ + 6H₂O + light energy ➔ C₆H₁₂O₆ + 6O₂`\n* **Key Site:** Occurs inside the chloroplasts of leaf cells.";
+        responseContent = "🌿 **Photosynthesis** is how green plants synthesize nutrients using sunlight, water, and CO₂.\n\n* **Equation:** `6CO₂ + 6H₂O + light ➔ C₆H₁₂O₆ + 6O₂`\n* **Site:** Occurs in chlorophyll leaf cells.";
         responseActions = [
-          { label: "Explain Simpler", action: "explain-simpler" },
-          { label: "Make Flashcards", action: "make-flashcards" },
+          { label: "Make Flashcards", action: "make-flashcards" }
         ];
       } else if (query.includes("revision plan") || query.includes("study plan")) {
-        responseContent = "📅 **Weekly Study Plan Suggestion:**\n\n* **Monday:** Physics (Properties of Waves) — 45 mins\n* **Wednesday:** Chemistry (Ionic Bonding review) — 40 mins\n* **Friday:** Biology (Cell Organelles practice) — 30 mins\n* **Saturday:** Complete Weekly Diagnostic Quiz — 20 mins";
+        responseContent = "📅 **Study Strategy Suggestion:**\n\n* **Monday:** Physics Waves — 45 mins\n* **Wednesday:** Chemistry Bonding — 40 mins\n* **Friday:** Biology Cells — 30 mins";
         responseActions = [
-          { label: "Add to Planner", action: "add-planner" },
+          { label: "Add to Planner", action: "add-planner" }
         ];
       } else {
-        responseContent = `Thank you for asking about that in the **${context}** context. I am Orbis, your personal curriculum learning companion. I can explain this topic, generate flashcards, create a quick mock test, or summarize key concepts.`;
+        responseContent = `Thank you for asking about that in the **${context}** context. I am Orbis, your personal learning coach. I can explain complex terms, configure revision timetables, or suggest Olympiad practices.`;
         responseActions = [
-          { label: "Explain Simpler", action: "explain-simpler" },
-          { label: "Create Quiz", action: "create-quiz" },
+          { label: "Explain Simpler", action: "explain-simpler" }
         ];
       }
 
@@ -101,7 +101,7 @@ function OrbisAIPageContent() {
         sender: "orbis",
         content: responseContent,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        actions: responseActions,
+        actions: responseActions
       };
 
       setMessages((prev) => [...prev, orbisMsg]);
@@ -109,218 +109,262 @@ function OrbisAIPageContent() {
     }, 1200);
   };
 
-  const handleActionClick = (action: string) => {
-    // Add dynamic response to clicking action buttons inside chat
-    setIsThinking(true);
-    setTimeout(() => {
-      let reply = "";
-      if (action === "explain-simpler") {
-        reply = "Here's a simpler summary: Think of it like a loop! The sun heats water up into the sky (Evaporation), it forms clouds (Condensation), it rains down (Precipitation), and flows back to repeat.";
-      } else if (action === "create-quiz") {
-        reply = "Here is a quick question: What is the process of water turning into vapor called? (Hint: Evaporation). You can practice this strand in the Curriculum Library!";
-      } else if (action === "save-note") {
-        reply = "✓ Note successfully saved to your Notebook under the 'Science' folder.";
-      } else if (action === "make-flashcards") {
-        reply = "✓ 5 flashcards added to your Flashcards deck under the topic 'Cell Biology'.";
-      } else if (action === "add-planner") {
-        reply = "✓ Study tasks successfully scheduled in your Study Calendar.";
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Math.random().toString(),
-          sender: "orbis",
-          content: reply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-      setIsThinking(false);
-    }, 800);
-  };
-
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] lg:h-[calc(100vh-5rem)] max-w-4xl mx-auto border border-border-default bg-surface rounded-2xl overflow-hidden animate-fade-up">
-      {/* Orbis Workspace Header */}
-      <div className="flex h-14 shrink-0 items-center justify-between border-b border-border-default bg-background/30 px-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-wisdom to-trust text-white shadow shadow-wisdom/25">
-            <Bot className="h-4.5 w-4.5" />
-          </div>
-          <div>
-            <h1 className="text-sm font-extrabold text-text-default">Orbis AI</h1>
-            {/* Dynamic Context indicator */}
-            <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
-              <span>Context:</span>
-              <span className="font-semibold text-accent truncate max-w-[200px]">{context}</span>
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-[80vh] animate-fade-up">
+      {/* Left Chat Screen (60%) */}
+      <div className="lg:col-span-3 flex flex-col rounded-xl border border-border-default bg-surface overflow-hidden shadow-md">
+        {/* Header */}
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border-default/45 px-6 bg-background/25">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-tr from-wisdom to-trust text-white">
+              <Bot className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-sm font-extrabold text-text-default">Orbis AI Coach</h1>
+              <span className="text-[9px] text-text-muted">Active Context: {context}</span>
             </div>
           </div>
+          <span className="flex items-center gap-1 text-[9px] font-extrabold text-green-400 uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span>Online</span>
+          </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-growth animate-pulse" />
-          <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Online</span>
-        </div>
-      </div>
-
-      {/* Messages / Welcome Greeting Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-background/10">
-        {messages.length === 0 ? (
-          /* Empty Greeting state */
-          <div className="flex flex-col items-center justify-center h-full text-center max-w-md mx-auto space-y-6 animate-fade-in">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-wisdom to-trust text-white shadow-xl shadow-wisdom/25">
-              <Bot className="h-8 w-8 animate-bounce" style={{ animationDuration: "3s" }} />
+        {/* Conversation List */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-background/10">
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center max-w-md mx-auto space-y-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-wisdom to-trust text-white shadow-xl shadow-wisdom/25 animate-bounce" style={{ animationDuration: "3s" }}>
+                <Bot className="h-8 w-8" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-lg font-extrabold text-text-default">Hello, I&apos;m Orbis</h2>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Your personal AI tutor. Ask me to explain concepts, build practice tests, or coach you through Olympiad questions.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pt-4">
+                {suggestedPrompts.map((p, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSendMessage(p.text)}
+                    className="flex items-start gap-3 p-3.5 rounded-xl border border-border-default/60 bg-surface hover:bg-primary/5 hover:border-accent hover:-translate-y-0.5 text-left text-xs font-semibold text-text-default hover-bloom active-press transition-all cursor-pointer"
+                  >
+                    <span className="text-base shrink-0">{p.icon}</span>
+                    <span className="leading-snug">{p.text}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-            
-            <div className="space-y-2">
-              <h2 className="text-xl font-extrabold text-text-default">Hello, I&apos;m Orbis</h2>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Your personal AI learning assistant. Ask me anything, upload a photo of your textbook, or ask to generate practice quizzes.
-              </p>
-            </div>
-
-            {/* Grid of suggested prompt cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pt-4">
-              {suggestedPrompts.map((p, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSendMessage(p.text)}
-                  className="flex items-start gap-3 p-3.5 rounded-xl border border-border-default/60 bg-surface hover:bg-primary/5 hover:border-accent hover:-translate-y-0.5 text-left text-xs font-semibold text-text-default shadow-sm hover:shadow active-press transition-all cursor-pointer"
-                >
-                  <span className="text-base shrink-0">{p.icon}</span>
-                  <span className="leading-snug">{p.text}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          /* Active Chat Conversation Log */
-          <div className="space-y-4">
-            {messages.map((msg) => {
-              const isOrbis = msg.sender === "orbis";
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex gap-3 max-w-[85%] animate-fade-in ${isOrbis ? "self-start" : "self-end flex-row-reverse ml-auto"}`}
-                >
-                  {/* Avatar */}
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border shadow-sm ${
-                    isOrbis
-                      ? "bg-gradient-to-tr from-wisdom to-trust border-wisdom text-white"
-                      : "bg-surface border-border-default text-text-default"
-                  }`}>
-                    {isOrbis ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
-                  </div>
-
-                  {/* Message bubble */}
-                  <div className="space-y-2">
-                    <div className={`rounded-xl px-4 py-3 text-xs md:text-sm shadow-sm leading-relaxed border ${
-                      isOrbis
-                        ? "bg-surface border-border-default text-text-default"
-                        : "bg-primary text-white border-primary"
+          ) : (
+            <div className="space-y-4">
+              {messages.map((msg) => {
+                const isOrbis = msg.sender === "orbis";
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex gap-3 max-w-[85%] ${isOrbis ? "self-start" : "self-end flex-row-reverse ml-auto"}`}
+                  >
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border shadow-sm ${
+                      isOrbis ? "bg-gradient-to-tr from-wisdom to-trust text-white" : "bg-surface border-border-default"
                     }`}>
-                      {/* Process simple markdown blocks for formatting */}
-                      {msg.content.split("\n\n").map((para, pIdx) => {
-                        // Check if paragraph is list
-                        if (para.startsWith("1.") || para.startsWith("*")) {
-                          return (
-                            <ul key={pIdx} className="list-disc pl-4 space-y-1 my-1">
-                              {para.split("\n").map((li, lIdx) => (
-                                <li key={lIdx}>{li.replace(/^[*\s0-9.]+\s*/, "")}</li>
-                              ))}
-                            </ul>
-                          );
-                        }
-                        return <p key={pIdx}>{para}</p>;
-                      })}
+                      {isOrbis ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
                     </div>
 
-                    {/* Action buttons under Orbis messages */}
-                    {isOrbis && msg.actions && (
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {msg.actions.map((act, actIdx) => (
-                          <button
-                            key={actIdx}
-                            onClick={() => handleActionClick(act.action)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border-default bg-background/50 hover:bg-background/80 text-[10px] font-bold text-text-default active-press transition-colors shadow-sm"
-                          >
-                            {act.action === "explain-simpler" && <HelpCircle className="h-3 w-3 text-accent" />}
-                            {act.action === "create-quiz" && <Sparkles className="h-3 w-3 text-growth" />}
-                            {act.action === "save-note" && <FileText className="h-3 w-3 text-trust" />}
-                            <span>{act.label}</span>
-                          </button>
+                    <div className="space-y-1.5">
+                      <div className={`rounded-xl px-4 py-3 text-xs md:text-sm shadow-sm leading-relaxed border ${
+                        isOrbis ? "bg-surface border-border-default text-text-default" : "bg-primary text-white border-primary"
+                      }`}>
+                        {msg.content.split("\n\n").map((para, pIdx) => (
+                          <p key={pIdx} className="mb-2 last:mb-0">{para}</p>
                         ))}
                       </div>
-                    )}
-                    
-                    <span className="block text-[9px] text-text-muted px-1">
-                      {msg.timestamp}
-                    </span>
+                      <span className="block text-[8px] text-text-muted px-1">{msg.timestamp}</span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {isThinking && (
+                <div className="flex gap-3 max-w-[80%] self-start animate-pulse">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-wisdom to-trust border-wisdom text-white shadow-sm">
+                    <Bot className="h-4 w-4" />
+                  </div>
+                  <div className="rounded-xl px-4 py-3 bg-surface border border-border-default text-text-muted text-xs flex items-center gap-1.5 shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
-              );
-            })}
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
 
-            {/* Thinking indicator */}
-            {isThinking && (
-              <div className="flex gap-3 max-w-[80%] self-start animate-pulse">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-wisdom to-trust border-wisdom text-white shadow-sm">
-                  <Bot className="h-4 w-4" />
-                </div>
-                <div className="rounded-xl px-4 py-3 bg-surface border border-border-default text-text-muted text-xs flex items-center gap-1.5 shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "300ms" }} />
-                </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-        )}
+        {/* Input tray */}
+        <div className="p-4 border-t border-border-default bg-background/20 shrink-0">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage(inputValue);
+            }}
+            className="flex items-center gap-2 rounded-xl border border-border-default bg-surface px-3 py-2 shadow-inner focus-within:border-accent transition-colors"
+          >
+            <button type="button" className="p-1.5 rounded-lg text-text-muted hover:text-text-default hover:bg-background active-press">
+              <Camera className="h-4.5 w-4.5" />
+            </button>
+            <button type="button" className="p-1.5 rounded-lg text-text-muted hover:text-text-default hover:bg-background active-press">
+              <Paperclip className="h-4.5 w-4.5" />
+            </button>
+
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Ask Orbis for revision strategies..."
+              className="flex-1 bg-transparent px-2 text-xs md:text-sm text-text-default placeholder:text-text-muted focus:outline-none"
+            />
+            <button type="submit" disabled={!inputValue.trim()} className="p-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white disabled:opacity-40 active-press shrink-0">
+              <SendHorizontal className="h-4.5 w-4.5" />
+            </button>
+          </form>
+        </div>
       </div>
 
-      {/* Input Tray footer */}
-      <div className="p-4 border-t border-border-default bg-background/20 shrink-0">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSendMessage(inputValue);
-          }}
-          className="flex items-center gap-2 rounded-xl border border-border-default bg-surface px-3 py-2 shadow-inner focus-within:border-accent transition-colors"
-        >
-          <button
-            type="button"
-            className="p-1.5 rounded-lg text-text-muted hover:text-text-default hover:bg-background active-press transition-colors"
-            title="Snap a photo"
-          >
-            <Camera className="h-4.5 w-4.5" />
-          </button>
-          
-          <button
-            type="button"
-            className="p-1.5 rounded-lg text-text-muted hover:text-text-default hover:bg-background active-press transition-colors"
-            title="Attach file"
-          >
-            <Paperclip className="h-4.5 w-4.5" />
-          </button>
+      {/* Right V2 Coach Sidebar (40%) */}
+      <div className="lg:col-span-2 flex flex-col rounded-xl border border-border-default bg-surface overflow-hidden shadow-md">
+        {/* Sub-nav headers */}
+        <div className="grid grid-cols-5 border-b border-border-default/45 p-1 bg-background/25 shrink-0 text-center font-bold text-[9px] uppercase tracking-wide">
+          {([
+            { id: "summary", label: "Stats", icon: TrendingUp },
+            { id: "goals", label: "Goals", icon: Target },
+            { id: "olympiad", label: "Olympiad", icon: Trophy },
+            { id: "coding", label: "Code", icon: Code },
+            { id: "career", label: "Career", icon: GraduationCap }
+          ] as const).map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveOrbisSidebarTab(tab.id)}
+                className={`py-2 rounded flex flex-col items-center gap-1 transition-all active-press ${
+                  activeOrbisSidebarTab === tab.id ? "bg-accent/15 text-accent border border-accent/20" : "text-text-muted hover:text-text-default"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder={`Ask Orbis or attach a photo of your textbook...`}
-            className="flex-1 bg-transparent px-2 text-xs md:text-sm text-text-default placeholder:text-text-muted/70 focus:outline-none"
-          />
+        {/* Sidebar tabs viewport */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+          {activeOrbisSidebarTab === "summary" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-xs font-bold text-text-default flex items-center gap-1.5">
+                <TrendingUp className="h-4 w-4 text-accent" />
+                <span>Academic Summary Insights</span>
+              </h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                Orbis tracks your class average and has calculated your weak areas:
+              </p>
+              <div className="space-y-2">
+                <div className="p-3 rounded-lg border border-border-default bg-background/20 space-y-1">
+                  <p className="font-bold text-text-default flex justify-between">
+                    <span>Physics (Optics)</span>
+                    <span className="text-green-400">85% average</span>
+                  </p>
+                  <p className="text-[10px] text-text-muted">Strong concept mastery. Completed 4 assignments.</p>
+                </div>
+                <div className="p-3 rounded-lg border border-border-default bg-background/20 space-y-1">
+                  <p className="font-bold text-text-default flex justify-between">
+                    <span>Mathematics (Stats)</span>
+                    <span className="text-passion">58% average</span>
+                  </p>
+                  <p className="text-[10px] text-text-muted">Requires focus. Practice 5 mean deviation formulas.</p>
+                </div>
+              </div>
+            </div>
+          )}
 
-          <button
-            type="submit"
-            disabled={!inputValue.trim()}
-            className="p-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white disabled:opacity-40 disabled:bg-transparent disabled:text-text-muted active-press transition-colors cursor-pointer"
-          >
-            <SendHorizontal className="h-4.5 w-4.5" />
-          </button>
-        </form>
+          {activeOrbisSidebarTab === "goals" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-xs font-bold text-text-default flex items-center gap-1.5">
+                <Target className="h-4 w-4 text-accent" />
+                <span>Goal & Revision Advisors</span>
+              </h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                Your pathway target is set to **STEM**.
+              </p>
+              <div className="p-4 rounded-xl border border-accent/20 bg-accent/5 space-y-2">
+                <p className="font-bold text-text-default">Target: Class Rank Top 5</p>
+                <p className="text-[10px] text-text-muted leading-relaxed">
+                  To reach this, your average score must increase by **4.5%**. Focus on sub-strand assessment revisions in Math and Chemistry.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {activeOrbisSidebarTab === "olympiad" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-xs font-bold text-text-default flex items-center gap-1.5">
+                <Trophy className="h-4 w-4 text-accent" />
+                <span>Olympiad Coach Support</span>
+              </h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                Unlock training tips for the upcoming **Chemistry Contest**:
+              </p>
+              <ul className="space-y-2">
+                <li className="p-2.5 rounded border border-border-default bg-background/20 leading-relaxed text-[10px]">
+                  🔬 **Daily Tip:** Focus on periodic properties and valency configurations. Practice Bohr models regularly.
+                </li>
+                <li className="p-2.5 rounded border border-border-default bg-background/20 leading-relaxed text-[10px]">
+                  💡 **Suggested Problem:** What is the electron config of Calcium-40? Try writing it in the Chemistry periodic tool.
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {activeOrbisSidebarTab === "coding" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-xs font-bold text-text-default flex items-center gap-1.5">
+                <Code className="h-4 w-4 text-accent" />
+                <span>Coding Assistant Modules</span>
+              </h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                Practice JavaScript or Python client-side:
+              </p>
+              <div className="p-3.5 rounded-lg border border-border-default bg-background/30 space-y-2">
+                <p className="font-bold text-accent">Physics Wave Sim Formula:</p>
+                <pre className="text-[9px] font-mono bg-background p-2 rounded text-text-default border border-border-default/40 overflow-x-auto">
+{`def wave_speed(freq, wavelength):
+    return freq * wavelength
+print(wave_speed(2.5, 0.4)) # Speed in m/s`}
+                </pre>
+              </div>
+            </div>
+          )}
+
+          {activeOrbisSidebarTab === "career" && (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-xs font-bold text-text-default flex items-center gap-1.5">
+                <GraduationCap className="h-4 w-4 text-accent" />
+                <span>Career Pathway Matching</span>
+              </h3>
+              <div className="p-3.5 rounded-lg border border-border-default bg-background/20 space-y-2">
+                <p className="font-bold text-text-default">Software Engineer</p>
+                <div className="w-full bg-background h-2 rounded-full overflow-hidden border border-border-default/40">
+                  <div className="bg-green-400 h-full" style={{ width: "90%" }} />
+                </div>
+                <p className="text-[10px] text-text-muted leading-relaxed">
+                  90% Compatible based on your STEM cluster selections (Computer Studies, Physics).
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -328,7 +372,7 @@ function OrbisAIPageContent() {
 
 export default function OrbisAIPage() {
   return (
-    <Suspense fallback={<div className="text-center py-20 text-text-muted">Loading Orbis Workspace...</div>}>
+    <Suspense fallback={<div className="text-center py-20 text-text-muted font-bold text-xs uppercase tracking-widest animate-pulse">Loading Orbis Workspace...</div>}>
       <OrbisAIPageContent />
     </Suspense>
   );
