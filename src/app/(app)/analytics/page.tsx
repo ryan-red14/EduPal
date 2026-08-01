@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TrendingUp, Award, Clock, Star, Flame, Sparkles, BookOpen, FileText, CheckCircle2, ChevronRight, Grid } from "lucide-react";
+import { TrendingUp, Award, Clock, Star, Flame, Sparkles, BookOpen, FileText, CheckCircle2, ChevronRight } from "lucide-react";
 
 interface SubjectResult {
   code: string;
@@ -62,14 +62,6 @@ export default function AnalyticsPage() {
   const avgPoints = (results.reduce((acc, r) => acc + r.points, 0) / results.length).toFixed(2);
   const avgGpa = (results.reduce((acc, r) => acc + r.gpa, 0) / results.length).toFixed(2);
 
-  // Heatmap Mock: 4 weeks x 7 days = 28 slots
-  const heatmapData = [
-    30, 45, 60, 0, 15, 90, 45,
-    60, 30, 0, 45, 60, 120, 15,
-    30, 90, 45, 60, 0, 75, 45,
-    90, 60, 30, 45, 120, 90, 60
-  ];
-
   return (
     <div className="space-y-6 md:space-y-8 animate-fade-up">
       {/* Header */}
@@ -114,58 +106,81 @@ export default function AnalyticsPage() {
         {/* Left Column: KNEC Transcript (3/5) */}
         <div className="lg:col-span-3 space-y-6">
           {/* Official KNEC Slip Card */}
-          <div className="rounded-2xl border border-border-default bg-surface overflow-hidden shadow-xl hover-bloom">
+          <div className="rounded-2xl border border-border-default bg-surface overflow-hidden shadow-xl">
             {/* Header banner */}
-            <div className="bg-[#121A2A] text-white p-6 border-b border-border-default/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div className="space-y-1">
-                <p className="text-[10px] font-black tracking-widest text-accent uppercase">Kenyan National Examinations Council</p>
-                <h2 className="text-lg font-black tracking-tight">KJSEA 2025 RESULT SLIP</h2>
+            <div className="bg-background/40 border-b border-border-default/60 p-5 text-center space-y-3 relative">
+              {/* Mock Seal */}
+              <div className="h-10 w-10 rounded-full border border-accent/45 bg-accent/5 mx-auto flex items-center justify-center text-[8px] font-bold text-accent">
+                KNEC
               </div>
-              <div className="text-right text-[10px] text-text-muted font-mono leading-relaxed">
-                <p>REF: KNEC/KJSEA/2025/940251</p>
-                <p>DATE: 30TH NOVEMBER 2025</p>
+              <div className="space-y-1">
+                <h2 className="text-sm font-extrabold text-text-default tracking-wide uppercase">
+                  The Kenya National Examinations Council
+                </h2>
+                <p className="text-xs font-bold text-accent">
+                  2025 {parseInt(userGradeData) >= 10 ? "KPSEA/KCSE" : "KJSEA"} Results
+                </p>
               </div>
             </div>
 
             {/* Student metadata */}
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-border-default/20 bg-background/25 text-xs font-semibold leading-relaxed">
-              <div className="space-y-1">
-                <p className="text-[9px] text-text-muted uppercase font-bold">Student Name</p>
-                <p className="text-text-default font-bold">{studentName}</p>
+            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-border-default/30 text-xs">
+              <div className="space-y-1.5">
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Assessment Number</span>
+                  <span className="font-mono font-bold text-text-default">A001741925</span>
+                </div>
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Full Name</span>
+                  <span className="font-bold text-text-default">{studentName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Gender</span>
+                  <span className="font-bold text-text-default">M</span>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-[9px] text-text-muted uppercase font-bold">School Name</p>
-                <p className="text-text-default font-bold">{schoolName}</p>
+
+              <div className="space-y-1.5">
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Centre Code</span>
+                  <span className="font-mono font-bold text-text-default">12315261</span>
+                </div>
+                <div className="flex justify-between border-b border-border-default/15 pb-1">
+                  <span className="text-text-muted uppercase text-[9px] font-bold">Centre Name</span>
+                  <span className="font-bold text-text-default truncate max-w-[150px]">{schoolName}</span>
+                </div>
               </div>
             </div>
 
-            {/* Subjects Marks Table */}
+            {/* Results Table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full text-left text-xs font-semibold">
                 <thead>
-                  <tr className="border-b border-border-default/30 bg-background/40 font-bold uppercase text-[9px] text-text-muted">
-                    <th className="py-2.5 px-4">Code</th>
-                    <th className="py-2.5 px-4">Subject Description</th>
-                    <th className="py-2.5 px-4">Grade / Rubric Level</th>
-                    <th className="py-2.5 px-4">Points</th>
-                    <th className="py-2.5 px-4">Performance Indicator</th>
+                  <tr className="border-b border-border-default/30 bg-background/20 text-text-muted uppercase text-[9px] tracking-wider">
+                    <th className="py-3 px-4">Subject Code</th>
+                    <th className="py-3 px-4">Subject Name</th>
+                    <th className="py-3 px-4">Performance Level</th>
+                    <th className="py-3 px-4">Points</th>
+                    <th className="py-3 px-4">Description</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border-default/20 font-semibold text-text-default">
+                <tbody className="divide-y divide-border-default/20 text-text-default">
                   {results.map((r) => (
-                    <tr key={r.code} className="hover:bg-background/20 transition-colors">
+                    <tr key={r.code} className="hover:bg-background/10">
                       <td className="py-3 px-4 font-mono">{r.code}</td>
-                      <td className="py-3 px-4">{r.name}</td>
-                      <td className="py-3 px-4">
-                        <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-black ${
-                          r.points >= 7 ? "bg-green-500/10 text-green-400" : "bg-accent/10 text-accent"
-                        }`}>
-                          {rubric === "cbe" && r.cbeLevel}
-                          {rubric === "traditional" && r.tradGrade}
-                          {rubric === "gpa" && `${r.gpa.toFixed(1)} / 4.0`}
-                        </span>
+                      <td className="py-3 px-4 font-bold">{r.name}</td>
+                      
+                      {/* Performance Level */}
+                      <td className="py-3 px-4 font-mono text-accent">
+                        {rubric === "cbe" && r.cbeLevel}
+                        {rubric === "traditional" && r.tradGrade}
+                        {rubric === "gpa" && r.gpa.toFixed(1)}
                       </td>
+
+                      {/* Points */}
                       <td className="py-3 px-4 font-mono">{r.points}</td>
+
+                      {/* Description */}
                       <td className="py-3 px-4 text-text-muted font-medium">
                         {rubric === "cbe" && r.cbeDesc}
                         {rubric === "traditional" && r.tradDesc}
@@ -177,143 +192,106 @@ export default function AnalyticsPage() {
               </table>
             </div>
 
-            {/* Pathway averages */}
+            {/* Pathway averages (Compulsory footer) */}
             <div className="p-4 bg-background/25 border-t border-border-default/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs">
-              <div className="p-2 rounded bg-background/40 border border-border-default/40 hover-bloom">
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
                 <p className="text-[9px] text-text-muted font-bold uppercase">Arts & Sports Pathway</p>
-                <p className="font-black text-accent mt-0.5">73.66</p>
+                <p className="font-black text-accent mt-0.5">73.6632</p>
               </div>
-              <div className="p-2 rounded bg-background/40 border border-border-default/40 hover-bloom">
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
                 <p className="text-[9px] text-text-muted font-bold uppercase">Social Science Pathway</p>
-                <p className="font-black text-accent mt-0.5">73.72</p>
+                <p className="font-black text-accent mt-0.5">73.7231</p>
               </div>
-              <div className="p-2 rounded bg-background/40 border border-border-default/40 hover-bloom">
+              <div className="p-2 rounded bg-background/40 border border-border-default/40">
                 <p className="text-[9px] text-text-muted font-bold uppercase">STEM Pathway</p>
-                <p className="font-black text-accent mt-0.5">73.75</p>
+                <p className="font-black text-accent mt-0.5">73.7518</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: V2 Animated SVG Charts (2/5) */}
+        {/* Right Column: Animated SVG Charts (2/5) */}
         <div className="lg:col-span-2 space-y-6">
-          
-          {/* Radar Chart (Subject clusters strengths) */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
+          {/* Study Time bar chart */}
+          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
             <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-              <Star className="h-4.5 w-4.5 text-accent animate-pulse" />
-              <span>Competency Radar Analysis</span>
+              <Clock className="h-4.5 w-4.5 text-accent" />
+              <span>Weekly Study Distribution (Hours)</span>
             </h3>
 
-            <div className="flex justify-center py-4">
-              <svg className="h-44 w-44" viewBox="0 0 100 100">
-                {/* Background pentagon rings */}
-                <polygon points="50,10 88,38 73,83 27,83 12,38" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
-                <polygon points="50,23 78,44 67,78 33,78 22,44" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
-                <polygon points="50,36 68,50 61,72 39,72 32,50" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
-                
-                {/* Axis lines */}
-                <line x1="50" y1="50" x2="50" y2="10" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
-                <line x1="50" y1="50" x2="88" y2="38" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
-                <line x1="50" y1="50" x2="73" y2="83" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
-                <line x1="50" y1="50" x2="27" y2="83" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
-                <line x1="50" y1="50" x2="12" y2="38" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
-
-                {/* Score polygon */}
-                <polygon
-                  points="50,18 78,28 66,74 31,73 24,32"
-                  fill="rgba(168, 85, 247, 0.25)"
-                  stroke="#A855F7"
-                  strokeWidth="2"
-                  className="animate-logo-draw"
-                />
-
-                {/* Labels */}
-                <text x="50" y="7" textAnchor="middle" fontSize="5" fill="var(--text-muted)" fontWeight="bold">STEM</text>
-                <text x="92" y="38" textAnchor="start" fontSize="5" fill="var(--text-muted)" fontWeight="bold">LANG</text>
-                <text x="76" y="88" textAnchor="start" fontSize="5" fill="var(--text-muted)" fontWeight="bold">HUM</text>
-                <text x="24" y="88" textAnchor="end" fontSize="5" fill="var(--text-muted)" fontWeight="bold">ARTS</text>
-                <text x="8" y="38" textAnchor="end" fontSize="5" fill="var(--text-muted)" fontWeight="bold">TECH</text>
-              </svg>
-            </div>
-          </div>
-
-          {/* Heatmap (Study consistency grid) */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
-            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-              <Grid className="h-4.5 w-4.5 text-accent" />
-              <span>Study Consistency Heatmap</span>
-            </h3>
-
-            <div className="grid grid-cols-7 gap-1.5 p-2 bg-background/25 rounded-lg border border-border-default/45">
-              {heatmapData.map((mins, idx) => {
-                let colorClass = "bg-background border border-border-default/20";
-                if (mins > 90) colorClass = "bg-green-500/80 border-green-500";
-                else if (mins > 45) colorClass = "bg-green-500/50 border-green-500/60";
-                else if (mins > 0) colorClass = "bg-green-500/20 border-green-500/30";
-
+            <div className="h-40 w-full flex items-end justify-between gap-2 pt-6 pb-2 px-2 relative border-b border-border-default/30">
+              {/* Bars */}
+              {[
+                { day: "Mon", hrs: 2.5 },
+                { day: "Tue", hrs: 1.8 },
+                { day: "Wed", hrs: 3.2 },
+                { day: "Thu", hrs: 0.5 },
+                { day: "Fri", hrs: 2.0 },
+                { day: "Sat", hrs: 4.5 },
+                { day: "Sun", hrs: 1.5 }
+              ].map((d, idx) => {
+                const heightPct = (d.hrs / 5) * 100;
                 return (
-                  <div
-                    key={idx}
-                    className={`aspect-square rounded-sm transition-all duration-300 hover:scale-105 cursor-pointer relative group ${colorClass}`}
-                  >
-                    <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-accent text-background text-[8px] font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap z-50">
-                      {mins} mins
-                    </span>
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                    <div className="relative w-full flex justify-center">
+                      {/* Tooltip */}
+                      <span className="absolute bottom-full mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-accent text-background text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                        {d.hrs}h
+                      </span>
+                      <div
+                        className="w-full bg-accent/20 border border-accent/45 hover:bg-accent/40 rounded-t-sm transition-all duration-500 ease-out"
+                        style={{ height: `${heightPct}%`, minHeight: "4px" }}
+                      />
+                    </div>
+                    <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider">{d.day}</span>
                   </div>
                 );
               })}
-            </div>
-            <div className="flex justify-between items-center text-[9px] text-text-muted font-bold uppercase px-1">
-              <span>Less</span>
-              <div className="flex gap-1 items-center">
-                <div className="h-2 w-2 rounded bg-background border border-border-default/20" />
-                <div className="h-2 w-2 rounded bg-green-500/20 border border-green-500/30" />
-                <div className="h-2 w-2 rounded bg-green-500/50 border border-green-500/60" />
-                <div className="h-2 w-2 rounded bg-green-500/80 border border-green-500" />
-              </div>
-              <span>More</span>
+              <div className="absolute left-0 top-0 text-[8px] text-text-muted">5h</div>
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[8px] text-text-muted">2.5h</div>
             </div>
           </div>
 
-          {/* Position Timeline (Line Chart rank progression) */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
+          {/* Subject performance trend */}
+          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
             <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
               <TrendingUp className="h-4.5 w-4.5 text-accent animate-pulse" />
-              <span>Rank Position Timeline</span>
+              <span>Score Progression Trend</span>
             </h3>
 
-            <div className="h-32 w-full bg-background/25 rounded-lg border border-border-default/20 relative flex items-end p-2">
+            <div className="h-36 w-full bg-background/25 rounded-lg border border-border-default/20 relative flex items-end p-2">
               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                {/* Horizontal reference grid lines */}
-                <line x1="0" y1="20" x2="100" y2="20" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
-                <line x1="0" y1="50" x2="100" y2="50" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
-                <line x1="0" y1="80" x2="100" y2="80" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
-                
-                {/* Area chart filled path */}
+                <line x1="0" y1="30" x2="100" y2="30" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
+                <line x1="0" y1="60" x2="100" y2="60" stroke="var(--border-default)" strokeWidth="0.15" strokeDasharray="3" />
                 <path
-                  d="M 5,80 L 25,65 L 45,50 L 65,35 L 85,25 L 95,20 L 95,100 L 5,100 Z"
-                  fill="rgba(168, 85, 247, 0.1)"
-                />
-                
-                {/* Line path */}
-                <path
-                  d="M 5,80 L 25,65 L 45,50 L 65,35 L 85,25 L 95,20"
+                  d="M 5,85 Q 25,60 45,40 T 95,15"
                   fill="none"
                   stroke="var(--accent)"
                   strokeWidth="2"
                   className="animate-logo-draw"
                 />
               </svg>
-              <div className="absolute left-2 top-2 text-[8px] text-text-muted">Rank 1</div>
-              <div className="absolute left-2 bottom-2 text-[8px] text-text-muted">Rank 20</div>
+              <div className="absolute left-2 top-2 text-[8px] text-text-muted">100%</div>
+              <div className="absolute left-2 bottom-2 text-[8px] text-text-muted">0%</div>
             </div>
             
             <div className="flex justify-between items-center text-[9px] text-text-muted font-bold uppercase px-2">
-              <span>Week 1 (Rank 16)</span>
-              <span>Week 3 (Rank 10)</span>
-              <span>Week 6 (Rank 5)</span>
+              <span>Week 1</span>
+              <span>Week 2</span>
+              <span>Week 3</span>
+              <span>Week 4 (Current)</span>
             </div>
+          </div>
+
+          {/* Orbis recommendations */}
+          <div className="rounded-xl border border-accent/25 bg-accent/5 p-5 md:p-6 space-y-4">
+            <h3 className="flex items-center gap-2 text-xs font-bold text-text-default">
+              <Sparkles className="h-4.5 w-4.5 text-accent animate-pulse" />
+              <span>Orbis Performance Insights</span>
+            </h3>
+            <p className="text-xs text-text-muted leading-relaxed">
+              Your average score sits at **78% (ME1)**. You are exceeding expectations in **Physics** and **Integrated Science**. Let&apos;s boost your Mathematics score by completing the Daily Challenge quiz.
+            </p>
           </div>
         </div>
       </div>

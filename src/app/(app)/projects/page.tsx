@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Users, Plus, ChevronRight, MessageSquare, BookOpen } from "lucide-react";
-import Link from "next/link";
 
 export default function ProjectsPage() {
   const activeProjects = [
@@ -67,13 +66,10 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              <Link
-                href="/collaboration"
-                className="w-full mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg border border-border-default hover:bg-background/80 text-text-default py-2 text-xs font-semibold active-press transition-colors"
-              >
+              <button className="w-full mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg border border-border-default hover:bg-background/80 text-text-default py-2 text-xs font-semibold active-press transition-colors">
                 <MessageSquare className="h-3.5 w-3.5 text-text-muted" />
                 <span>Open Collaboration Hub</span>
-              </Link>
+              </button>
             </div>
           </div>
         ))}

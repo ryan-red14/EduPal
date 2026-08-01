@@ -13,13 +13,7 @@ import {
   BookMarked,
   Volume2,
   AlertCircle,
-  BookText,
-  Bookmark,
-  Terminal,
-  Grid,
-  Lightbulb
 } from "lucide-react";
-import { CodingStudio } from "@/components/shared/CodingStudio";
 
 interface Element {
   num: number;
@@ -28,31 +22,33 @@ interface Element {
   weight: number;
   category: "alkali" | "alkaline" | "transition" | "post-transition" | "nonmetal" | "halogen" | "noble";
   groupClass: string;
-  bohrConfig: string;
-  valency: number;
-  meltPoint: string;
-  boilPoint: string;
 }
 
 export default function ToolsPage() {
-  const [activeTab, setActiveTab] = useState<"periodic" | "calc" | "converter" | "dictionary" | "religion" | "coding">("periodic");
+  const [activeTab, setActiveTab] = useState<"periodic" | "calc" | "converter" | "dictionary">("periodic");
   
   // 1. PERIODIC TABLE STATE & DATA
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
   
   const elements: Element[] = [
-    { num: 1, symbol: "H", name: "Hydrogen", weight: 1.008, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30", bohrConfig: "1", valency: 1, meltPoint: "-259.1 °C", boilPoint: "-252.9 °C" },
-    { num: 2, symbol: "He", name: "Helium", weight: 4.0026, category: "noble", groupClass: "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30", bohrConfig: "2", valency: 0, meltPoint: "-272.2 °C", boilPoint: "-268.9 °C" },
-    { num: 3, symbol: "Li", name: "Lithium", weight: 6.94, category: "alkali", groupClass: "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30", bohrConfig: "2, 1", valency: 1, meltPoint: "180.5 °C", boilPoint: "1342 °C" },
-    { num: 4, symbol: "Be", name: "Beryllium", weight: 9.0122, category: "alkaline", groupClass: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30", bohrConfig: "2, 2", valency: 2, meltPoint: "1287 °C", boilPoint: "2469 °C" },
-    { num: 5, symbol: "B", name: "Boron", weight: 10.81, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30", bohrConfig: "2, 3", valency: 3, meltPoint: "2076 °C", boilPoint: "3927 °C" },
-    { num: 6, symbol: "C", name: "Carbon", weight: 12.011, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30", bohrConfig: "2, 4", valency: 4, meltPoint: "3550 °C", boilPoint: "4827 °C" },
-    { num: 7, symbol: "N", name: "Nitrogen", weight: 14.007, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30", bohrConfig: "2, 5", valency: 3, meltPoint: "-210.0 °C", boilPoint: "-195.8 °C" },
-    { num: 8, symbol: "O", name: "Oxygen", weight: 15.999, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30", bohrConfig: "2, 6", valency: 2, meltPoint: "-218.8 °C", boilPoint: "-183.0 °C" },
-    { num: 9, symbol: "F", name: "Fluorine", weight: 18.998, category: "halogen", groupClass: "bg-[#EC4899]/15 text-[#EC4899] border-[#EC4899]/30", bohrConfig: "2, 7", valency: 1, meltPoint: "-219.6 °C", boilPoint: "-188.1 °C" },
-    { num: 10, symbol: "Ne", name: "Neon", weight: 20.18, category: "noble", groupClass: "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30", bohrConfig: "2, 8", valency: 0, meltPoint: "-248.6 °C", boilPoint: "-246.1 °C" },
-    { num: 11, symbol: "Na", name: "Sodium", weight: 22.99, category: "alkali", groupClass: "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30", bohrConfig: "2, 8, 1", valency: 1, meltPoint: "97.8 °C", boilPoint: "883 °C" },
-    { num: 12, symbol: "Mg", name: "Magnesium", weight: 24.305, category: "alkaline", groupClass: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30", bohrConfig: "2, 8, 2", valency: 2, meltPoint: "650 °C", boilPoint: "1090 °C" },
+    { num: 1, symbol: "H", name: "Hydrogen", weight: 1.008, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 2, symbol: "He", name: "Helium", weight: 4.0026, category: "noble", groupClass: "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30" },
+    { num: 3, symbol: "Li", name: "Lithium", weight: 6.94, category: "alkali", groupClass: "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30" },
+    { num: 4, symbol: "Be", name: "Beryllium", weight: 9.0122, category: "alkaline", groupClass: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30" },
+    { num: 5, symbol: "B", name: "Boron", weight: 10.81, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 6, symbol: "C", name: "Carbon", weight: 12.011, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 7, symbol: "N", name: "Nitrogen", weight: 14.007, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 8, symbol: "O", name: "Oxygen", weight: 15.999, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 9, symbol: "F", name: "Fluorine", weight: 18.998, category: "halogen", groupClass: "bg-[#EC4899]/15 text-[#EC4899] border-[#EC4899]/30" },
+    { num: 10, symbol: "Ne", name: "Neon", weight: 20.18, category: "noble", groupClass: "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30" },
+    { num: 11, symbol: "Na", name: "Sodium", weight: 22.99, category: "alkali", groupClass: "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30" },
+    { num: 12, symbol: "Mg", name: "Magnesium", weight: 24.305, category: "alkaline", groupClass: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30" },
+    { num: 13, symbol: "Al", name: "Aluminium", weight: 26.982, category: "post-transition", groupClass: "bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30" },
+    { num: 14, symbol: "Si", name: "Silicon", weight: 28.085, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 15, symbol: "P", name: "Phosphorus", weight: 30.974, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 16, symbol: "S", name: "Sulfur", weight: 32.06, category: "nonmetal", groupClass: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30" },
+    { num: 17, symbol: "Cl", name: "Chlorine", weight: 35.45, category: "halogen", groupClass: "bg-[#EC4899]/15 text-[#EC4899] border-[#EC4899]/30" },
+    { num: 18, symbol: "Ar", name: "Argon", weight: 39.948, category: "noble", groupClass: "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30" },
   ];
 
   // 2. WORKING SCIENTIFIC CALCULATOR STATE
@@ -67,6 +63,7 @@ export default function ToolsPage() {
       setCalcInput(calcInput.slice(0, -1));
     } else if (val === "=") {
       try {
+        // Safe evaluation of mathematical expression in JS
         let expr = calcInput
           .replace(/sin\(/g, "Math.sin(")
           .replace(/cos\(/g, "Math.cos(")
@@ -78,6 +75,7 @@ export default function ToolsPage() {
           .replace(/e/g, "Math.E")
           .replace(/\^/g, "**");
         
+        // Evaluate expression safely
         const res = new Function(`return ${expr}`)();
         setCalcResult(res.toString());
       } catch (err) {
@@ -104,6 +102,7 @@ export default function ToolsPage() {
 
     let result = 0;
     if (type === "length") {
+      // m, km, cm, mm
       let meters = num;
       if (from === "km") meters = num * 1000;
       else if (from === "cm") meters = num / 100;
@@ -114,14 +113,22 @@ export default function ToolsPage() {
       else if (to === "cm") result = meters * 100;
       else if (to === "mm") result = meters * 1000;
     } else if (type === "temp") {
-      let celsius = num;
-      if (from === "f") celsius = ((num - 32) * 5) / 9;
-      else if (from === "k") celsius = num - 273.15;
-
-      if (to === "c") result = celsius;
-      else if (to === "f") result = (celsius * 9) / 5 + 32;
-      else if (to === "k") result = celsius + 273.15;
+      // C, F, K
+      if (from === "C") {
+        if (to === "F") result = (num * 9/5) + 32;
+        else if (to === "K") result = num + 273.15;
+        else result = num;
+      } else if (from === "F") {
+        if (to === "C") result = (num - 32) * 5/9;
+        else if (to === "K") result = (num - 32) * 5/9 + 273.15;
+        else result = num;
+      } else {
+        if (to === "C") result = num - 273.15;
+        else if (to === "F") result = (num - 273.15) * 9/5 + 32;
+        else result = num;
+      }
     } else {
+      // kg, g, mg
       let grams = num;
       if (from === "kg") grams = num * 1000;
       else if (from === "mg") grams = num / 1000;
@@ -131,269 +138,345 @@ export default function ToolsPage() {
       else if (to === "mg") result = grams * 1000;
     }
 
-    setConvResult(result.toString());
+    setConvResult(result.toFixed(6).replace(/\.?0+$/, ""));
   };
 
-  // 4. DICTIONARY STATE & MOCK SWAHILI KAMUSI
-  const [dictQuery, setDictQuery] = useState("");
-  const [dictType, setDictType] = useState<"english" | "kamusi">("english");
-  const [dictData, setDictData] = useState<any>(null);
+  // 4. LIVE DICTIONARY STATE
+  const [dictWord, setDictWord] = useState("");
+  const [dictData, setDictData] = useState<any | null>(null);
   const [dictError, setDictError] = useState("");
+  const [dictLoading, setDictLoading] = useState(false);
 
-  const mockKamusi: Record<string, string> = {
-    mawimbi: "Mbenuko na mbonyeo wa nishati inayosafiri katika hewa au maji (Waves).",
-    mchanganyiko: "Mkusanyiko wa vitu viwili au zaidi visivyoungana kikemia (Mixtures).",
-    nishati: "Uwezo wa kufanya kazi (Energy)."
-  };
-
-  const handleDictSearch = async (e: React.FormEvent) => {
+  const handleLookupWord = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dictQuery.trim()) return;
+    if (!dictWord.trim()) return;
 
-    if (dictType === "kamusi") {
-      const match = mockKamusi[dictQuery.toLowerCase()];
-      if (match) {
-        setDictData({ title: dictQuery, definition: match });
-        setDictError("");
-      } else {
-        setDictError("Haikupatikana kwenye Kamusi.");
-        setDictData(null);
-      }
-      return;
-    }
+    setDictLoading(true);
+    setDictError("");
+    setDictData(null);
 
     try {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${dictQuery}`);
-      if (!res.ok) throw new Error("Word not found.");
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${dictWord.trim().toLowerCase()}`);
+      if (!res.ok) {
+        throw new Error("Word not found in the dictionary.");
+      }
       const data = await res.json();
       setDictData(data[0]);
-      setDictError("");
-    } catch {
-      setDictError("Word not found in English Dictionary.");
-      setDictData(null);
+    } catch (err: any) {
+      // Fallback local dictionary of school terms
+      const localDict: Record<string, any> = {
+        physics: { word: "physics", meanings: [{ partOfSpeech: "noun", definitions: [{ definition: "The branch of science concerned with the nature and properties of matter and energy." }] }] },
+        wave: { word: "wave", meanings: [{ partOfSpeech: "noun", definitions: [{ definition: "A disturbance that transfers energy from one point to another without transferring matter." }] }] },
+        atom: { word: "atom", meanings: [{ partOfSpeech: "noun", definitions: [{ definition: "The basic unit of a chemical element, consisting of protons, neutrons, and electrons." }] }] },
+        chemistry: { word: "chemistry", meanings: [{ partOfSpeech: "noun", definitions: [{ definition: "The scientific study of the properties and behavior of matter." }] }] }
+      };
+
+      const term = dictWord.trim().toLowerCase();
+      if (localDict[term]) {
+        setDictData(localDict[term]);
+      } else {
+        setDictError("Word not found. Try searching terms like 'wave', 'physics', or 'atom'.");
+      }
+    } finally {
+      setDictLoading(false);
     }
   };
 
-  // 5. RELIGIOUS STUDIES SEARCHER
-  const [relQuery, setRelQuery] = useState("");
-  const [relData, setRelData] = useState<any>(null);
+  const playPronunciation = () => {
+    if (!dictData) return;
+    const audioUrl = dictData.phonetics?.find((p: any) => p.audio)?.audio;
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audio.play();
+    } else {
+      // Fallback text-to-speech
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(dictData.word);
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+  };
 
-  const bibleVerses = [
-    { ref: "Mark 4:39", text: "He got up, rebuked the wind and said to the waves, 'Quiet! Be still!'" },
-    { ref: "Genesis 1:1", text: "In the beginning God created the heavens and the earth." }
-  ];
-
-  const quranVerses = [
-    { ref: "Al-Anbya 21:30", text: "We made from water every living thing. Will they not then believe?" }
-  ];
-
-  const handleRelSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = relQuery.toLowerCase();
-    
-    const bibleMatches = bibleVerses.filter(v => v.text.toLowerCase().includes(q) || v.ref.toLowerCase().includes(q));
-    const quranMatches = quranVerses.filter(v => v.text.toLowerCase().includes(q) || v.ref.toLowerCase().includes(q));
-    
-    setRelData({ bible: bibleMatches, quran: quranMatches });
+  // Maths Formula tables data
+  const mathsTables = {
+    trig: [
+      { angle: "0°", sin: "0", cos: "1", tan: "0" },
+      { angle: "30° (π/6)", sin: "0.5", cos: "0.866", tan: "0.577" },
+      { angle: "45° (π/4)", sin: "0.707", cos: "0.707", tan: "1" },
+      { angle: "60° (π/3)", sin: "0.866", cos: "0.5", tan: "1.732" },
+      { angle: "90° (π/2)", sin: "1", cos: "0", tan: "Undefined" }
+    ],
+    constants: [
+      { name: "Speed of Light (c)", val: "3.00 × 10⁸ m/s" },
+      { name: "Acceleration of Gravity (g)", val: "9.81 m/s²" },
+      { name: "Planck Constant (h)", val: "6.63 × 10⁻³⁴ J·s" },
+      { name: "Avogadro Number (Na)", val: "6.02 × 10²³ mol⁻¹" }
+    ]
   };
 
   return (
-    <div className="space-y-6 md:space-y-8 animate-fade-up max-w-4xl mx-auto">
+    <div className="space-y-6 md:space-y-8 animate-fade-up">
       {/* Header */}
-      <div className="border-b border-border-default/45 pb-4 flex justify-between items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-text-default tracking-tight">
-            Scientific & Languages Tools
-          </h1>
-          <p className="text-xs md:text-sm text-text-muted">
-            Access interactive tables, calculations, unit conversions, and language lookups.
-          </p>
-        </div>
+      <div className="border-b border-border-default/40 pb-4">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-text-default tracking-tight">
+          Scientific Tools
+        </h1>
+        <p className="text-xs md:text-sm text-text-muted">
+          Access periodic tables, calculate complex equations, convert units, and lookup curriculum definitions.
+        </p>
+      </div>
 
-        {/* Tab switcher */}
-        <div className="flex border border-border-default p-1 rounded-lg bg-surface font-bold text-xs gap-1 overflow-x-auto select-none max-w-md">
-          {[
-            { id: "periodic", label: "Periodic Table" },
-            { id: "calc", label: "Calculator" },
-            { id: "converter", label: "Converter" },
-            { id: "dictionary", label: "Languages" },
-            { id: "religion", label: "Scripture" },
-            { id: "coding", label: "Code Studio" }
-          ].map((tab) => (
+      {/* Tabs navigation */}
+      <div className="flex gap-2 border-b border-border-default/20 pb-2 overflow-x-auto">
+        {[
+          { id: "periodic", label: "Periodic Table", icon: AtomIcon },
+          { id: "calc", label: "Scientific Calculator", icon: CalcIcon },
+          { id: "converter", label: "Unit Converter", icon: ArrowLeftRight },
+          { id: "dictionary", label: "Live Dictionary", icon: BookMarked }
+        ].map((tab) => {
+          const Icon = tab.icon;
+          return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-3 py-1.5 rounded-md transition-all shrink-0 active-press ${
-                activeTab === tab.id ? "bg-accent text-white" : "text-text-muted hover:text-text-default"
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider relative shrink-0 transition-colors ${
+                activeTab === tab.id ? "text-accent" : "text-text-muted hover:text-text-default"
               }`}
             >
-              {tab.label}
+              <Icon className="h-4 w-4" />
+              <span>{tab.label}</span>
+              {activeTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent rounded-t-md" />
+              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      {/* Viewport */}
-      <div className="space-y-6">
-        
-        {/* 1. Periodic Table */}
-        {activeTab === "periodic" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
-            {/* Table Grid (60%) */}
-            <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 space-y-4 hover-bloom shadow-md">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <AtomIcon className="h-4.5 w-4.5 text-accent animate-pulse" />
-                <span>Chemistry Periodic Table</span>
-              </h3>
-              
-              <div className="grid grid-cols-4 gap-2">
-                {elements.map((el) => (
-                  <button
-                    key={el.num}
-                    onClick={() => setSelectedElement(el)}
-                    className={`p-3 rounded-lg border text-center transition-all duration-150 active-press ${el.groupClass} ${
-                      selectedElement?.num === el.num ? "ring-2 ring-accent border-transparent scale-[1.03]" : ""
-                    }`}
-                  >
-                    <span className="block text-[10px] font-bold text-text-muted">{el.num}</span>
-                    <span className="block text-lg font-black">{el.symbol}</span>
-                    <span className="block text-[8px] font-bold truncate">{el.name}</span>
-                  </button>
-                ))}
-              </div>
+      {/* 1. PERIODIC TABLE TAB */}
+      {activeTab === "periodic" && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
+          {/* Grid Layout (60%) */}
+          <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-4 space-y-4">
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">Elements Grid</h3>
+            <div className="grid grid-cols-6 gap-2">
+              {elements.map((el) => (
+                <button
+                  key={el.num}
+                  onClick={() => setSelectedElement(el)}
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all hover:-translate-y-0.5 active-press ${
+                    selectedElement?.num === el.num
+                      ? "border-accent bg-accent/10 text-accent scale-105 shadow-md"
+                      : el.groupClass
+                  }`}
+                >
+                  <span className="text-[9px] font-bold opacity-60">{el.num}</span>
+                  <span className="text-base font-black">{el.symbol}</span>
+                  <span className="text-[8px] truncate max-w-full font-medium">{el.name}</span>
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Element Detail Panel (40%) */}
-            <div className="lg:col-span-2 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md min-h-[300px]">
+          {/* Details & Orbis AI Explanations (40%) */}
+          <div className="lg:col-span-2">
+            <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 h-full flex flex-col justify-between">
               {selectedElement ? (
-                <div className="space-y-4 animate-fade-in text-xs font-semibold text-text-default">
-                  <div className="flex justify-between items-center border-b border-border-default/20 pb-3">
-                    <div>
-                      <h4 className="text-base font-black text-text-default">{selectedElement.name} ({selectedElement.symbol})</h4>
-                      <p className="text-[10px] text-text-muted uppercase font-bold">{selectedElement.category} element</p>
-                    </div>
-                    <span className="text-2xl font-black text-accent">{selectedElement.num}</span>
+                <div className="space-y-4 animate-fade-in flex-1">
+                  <div className="border-b border-border-default/20 pb-3">
+                    <span className="text-[10px] font-bold text-accent uppercase tracking-wider bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-full">
+                      Element #{selectedElement.num}
+                    </span>
+                    <h2 className="text-xl font-black text-text-default mt-2">{selectedElement.name}</h2>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-background/25 rounded border border-border-default/45">
-                      <p className="text-[9px] text-text-muted font-bold uppercase">Atomic Mass</p>
-                      <p className="font-bold text-sm mt-0.5">{selectedElement.weight}</p>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between py-1 border-b border-border-default/10">
+                      <span className="text-text-muted">Symbol</span>
+                      <span className="font-bold">{selectedElement.symbol}</span>
                     </div>
-                    <div className="p-3 bg-background/25 rounded border border-border-default/45">
-                      <p className="text-[9px] text-text-muted font-bold uppercase">Valency</p>
-                      <p className="font-bold text-sm mt-0.5">{selectedElement.valency}</p>
+                    <div className="flex justify-between py-1 border-b border-border-default/10">
+                      <span className="text-text-muted">Atomic Weight</span>
+                      <span className="font-semibold">{selectedElement.weight} u</span>
                     </div>
-                    <div className="p-3 bg-background/25 rounded border border-border-default/45">
-                      <p className="text-[9px] text-text-muted font-bold uppercase">Bohr Electron Shells</p>
-                      <p className="font-bold text-sm mt-0.5">{selectedElement.bohrConfig}</p>
+                    <div className="flex justify-between py-1 border-b border-border-default/10">
+                      <span className="text-text-muted">Category</span>
+                      <span className="font-semibold capitalize text-accent">{selectedElement.category}</span>
                     </div>
-                    <div className="p-3 bg-background/25 rounded border border-border-default/45">
-                      <p className="text-[9px] text-text-muted font-bold uppercase">Boiling Point</p>
-                      <p className="font-bold text-sm mt-0.5">{selectedElement.boilPoint}</p>
+                    <div className="flex justify-between py-1">
+                      <span className="text-text-muted">Phase</span>
+                      <span className="font-semibold">Solid (20°C)</span>
                     </div>
                   </div>
-
-                  {/* Ask Orbis contextual trigger */}
+                  
                   <Link
-                    href={`/orbis?context=PeriodicTable&query=Tell me more about ${selectedElement.name}`}
-                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white py-2 font-bold shadow active-press hover-bloom"
+                    href={`/orbis?context=${encodeURIComponent(`Science -> Periodic Table element -> ${selectedElement.name}`)}`}
+                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 text-white py-2 text-xs font-semibold active-press transition-colors shadow"
                   >
-                    <Sparkles className="h-4 w-4 text-accent fill-accent" />
-                    <span>Ask Orbis about {selectedElement.symbol}</span>
+                    <Sparkles className="h-4 w-4 text-accent" />
+                    <span>Explain Element</span>
                   </Link>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
-                  <AtomIcon className="h-10 w-10 text-text-muted opacity-30 animate-pulse" />
-                  <p className="text-xs text-text-muted font-semibold">Select an element on the left to inspect atomic configurations.</p>
+                <div className="text-center py-10 space-y-3 text-text-muted flex-1 flex flex-col justify-center">
+                  <AtomIcon className="h-10 w-10 mx-auto text-text-muted opacity-40 animate-spin" style={{ animationDuration: "12s" }} />
+                  <p className="text-xs font-semibold">Select an element from the grid to view details</p>
                 </div>
               )}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 2. Calculator */}
-        {activeTab === "calc" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
-            {/* scientific calculations Keypad (3/5) */}
-            <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 space-y-4 hover-bloom shadow-md">
-              <div className="bg-background/40 p-4 rounded-xl border border-border-default/60 text-right space-y-1">
-                <div className="text-xs text-text-muted min-h-[16px] font-mono">{calcInput || "0"}</div>
-                <div className="text-xl font-bold text-text-default min-h-[28px] font-mono">{calcResult || "0"}</div>
+      {/* 2. WORKING SCIENTIFIC CALCULATOR TAB */}
+      {activeTab === "calc" && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
+          {/* Calculator Layout (60%) */}
+          <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 max-w-md mx-auto w-full">
+            {/* Display screen */}
+            <div className="bg-background/80 border border-border-default rounded-xl p-4 text-right space-y-1 min-h-[80px] flex flex-col justify-between shadow-inner">
+              <div className="text-text-muted text-xs font-semibold font-mono tracking-wide overflow-x-auto whitespace-nowrap">
+                {calcInput || "0"}
               </div>
+              <div className="text-text-default text-xl font-black font-mono overflow-x-auto whitespace-nowrap">
+                {calcResult || "0"}
+              </div>
+            </div>
 
-              {/* Grid buttons */}
-              <div className="grid grid-cols-5 gap-1.5 text-xs font-mono font-bold">
-                {["sin(", "cos(", "tan(", "log(", "ln(", "π", "e", "^", "√(", "DEL", "C", "(", ")", "/", "*", "7", "8", "9", "-", "+", "4", "5", "6", "1", "2", "3", "0", ".", "="].map((btn) => (
+            {/* Keypad */}
+            <div className="grid grid-cols-5 gap-2 font-mono">
+              {/* Row 1: Scientific functions */}
+              {["sin(", "cos(", "tan(", "log(", "ln("].map((btn) => (
+                <button
+                  key={btn}
+                  onClick={() => handleCalcClick(btn)}
+                  className="p-2.5 rounded-lg bg-background border border-border-default/60 hover:border-text-muted text-accent font-bold text-[10px] uppercase active-press"
+                >
+                  {btn.replace("(", "")}
+                </button>
+              ))}
+
+              {/* Row 2: Sci functions */}
+              {["√(", "^", "(", ")", "DEL"].map((btn) => (
+                <button
+                  key={btn}
+                  onClick={() => handleCalcClick(btn)}
+                  className={`p-2.5 rounded-lg border font-bold text-xs active-press ${
+                    btn === "DEL"
+                      ? "bg-passion/25 border-passion/40 text-passion hover:bg-passion/35"
+                      : "bg-background border-border-default/60 text-accent"
+                  }`}
+                >
+                  {btn}
+                </button>
+              ))}
+
+              {/* Number pad & basic operators */}
+              {[
+                { val: "7", type: "num" }, { val: "8", type: "num" }, { val: "9", type: "num" }, { val: "/", type: "op" }, { val: "C", type: "clear" },
+                { val: "4", type: "num" }, { val: "5", type: "num" }, { val: "6", type: "num" }, { val: "*", type: "op" }, { val: "π", type: "num" },
+                { val: "1", type: "num" }, { val: "2", type: "num" }, { val: "3", type: "num" }, { val: "-", type: "op" }, { val: "e", type: "num" },
+                { val: "0", type: "num" }, { val: ".", type: "num" }, { val: "=", type: "eq" }, { val: "+", type: "op" }
+              ].map((btn) => {
+                let btnStyle = "bg-background border-border-default/60 text-text-default hover:border-text-muted";
+                if (btn.type === "op") btnStyle = "bg-primary/20 border-primary/30 text-accent font-bold";
+                else if (btn.type === "clear") btnStyle = "bg-passion/20 border-passion/30 text-passion font-bold";
+                else if (btn.type === "eq") btnStyle = "col-span-2 bg-accent/25 border-accent/45 text-accent font-black";
+
+                return (
                   <button
-                    key={btn}
-                    onClick={() => handleCalcClick(btn)}
-                    className={`p-3 rounded-lg border transition-all active-press ${
-                      btn === "=" ? "col-span-2 bg-primary text-white border-primary" :
-                      btn === "C" || btn === "DEL" ? "bg-passion/10 text-passion border-passion/30" : "bg-background border-border-default hover:bg-background/80"
-                    }`}
+                    key={btn.val}
+                    onClick={() => handleCalcClick(btn.val)}
+                    className={`p-3.5 rounded-lg border text-sm active-press transition-colors ${btnStyle}`}
                   >
-                    {btn}
+                    {btn.val}
                   </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Maths Reference Tables (40%) */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Trig Table */}
+            <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
+              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                <BookOpen className="h-4.5 w-4.5 text-accent" />
+                <span>Trigonometric Table</span>
+              </h3>
+
+              <table className="w-full text-left text-xs font-semibold">
+                <thead>
+                  <tr className="border-b border-border-default/30 text-text-muted uppercase text-[9px] tracking-wider">
+                    <th className="py-2">Angle (θ)</th>
+                    <th className="py-2">sin θ</th>
+                    <th className="py-2">cos θ</th>
+                    <th className="py-2">tan θ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-default/20 text-text-default">
+                  {mathsTables.trig.map((t, idx) => (
+                    <tr key={idx} className="hover:bg-background/25">
+                      <td className="py-2 font-mono">{t.angle}</td>
+                      <td className="py-2 font-mono">{t.sin}</td>
+                      <td className="py-2 font-mono">{t.cos}</td>
+                      <td className="py-2 font-mono">{t.tan}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Constants Table */}
+            <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
+              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+                <BookOpen className="h-4.5 w-4.5 text-accent" />
+                <span>Physics Constants</span>
+              </h3>
+
+              <div className="space-y-2 text-xs">
+                {mathsTables.constants.map((c, idx) => (
+                  <div key={idx} className="flex justify-between py-1.5 border-b border-border-default/15 font-semibold">
+                    <span className="text-text-muted">{c.name}</span>
+                    <span className="font-mono text-accent">{c.val}</span>
+                  </div>
                 ))}
               </div>
             </div>
-
-            {/* Reference formula sheet constants (2/5) */}
-            <div className="lg:col-span-2 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <Lightbulb className="h-4.5 w-4.5 text-accent" />
-                <span>Reference Constants</span>
-              </h3>
-              
-              <div className="space-y-2 text-xs font-semibold">
-                <div className="p-3 bg-background/25 border border-border-default rounded flex justify-between">
-                  <span className="text-text-muted">Speed of Light (c)</span>
-                  <span className="text-text-default font-mono">3.0 x 10^8 m/s</span>
-                </div>
-                <div className="p-3 bg-background/25 border border-border-default rounded flex justify-between">
-                  <span className="text-text-muted">Acceleration (g)</span>
-                  <span className="text-text-default font-mono">9.81 m/s²</span>
-                </div>
-                <div className="p-3 bg-background/25 border border-border-default rounded flex justify-between">
-                  <span className="text-text-muted">Planck Constant (h)</span>
-                  <span className="text-text-default font-mono">6.626 x 10^-34 J·s</span>
-                </div>
-              </div>
-            </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 3. Unit Converter */}
-        {activeTab === "converter" && (
-          <div className="rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-6 hover-bloom shadow-md animate-fade-in max-w-xl mx-auto">
-            <div className="flex gap-2 p-1 border border-border-default rounded-lg bg-background/40 font-bold text-[10px] uppercase text-center">
-              {[
-                { id: "length", label: "Length" },
-                { id: "temp", label: "Temperature" },
-                { id: "mass", label: "Mass" }
-              ].map((t) => (
+      {/* 3. UNIT CONVERTER TAB */}
+      {activeTab === "converter" && (
+        <div className="max-w-xl mx-auto rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-5 animate-fade-in">
+          <div className="flex justify-between items-center border-b border-border-default/30 pb-3">
+            <h3 className="text-sm font-bold text-text-default">Measurement Converter</h3>
+            <div className="flex gap-1.5 bg-background border border-border-default/40 p-1 rounded-lg">
+              {(["length", "temp", "mass"] as const).map((type) => (
                 <button
-                  key={t.id}
+                  key={type}
                   onClick={() => {
-                    setConvType(t.id as any);
-                    setConvFrom(t.id === "length" ? "m" : t.id === "temp" ? "c" : "kg");
-                    setConvTo(t.id === "length" ? "km" : t.id === "temp" ? "f" : "g");
-                    setConvResult("0.001");
+                    setConvType(type);
+                    if (type === "length") { setConvFrom("m"); setConvTo("km"); handleConvert(convVal, "m", "km", "length"); }
+                    else if (type === "temp") { setConvFrom("C"); setConvTo("F"); handleConvert(convVal, "C", "F", "temp"); }
+                    else { setConvFrom("kg"); setConvTo("g"); handleConvert(convVal, "kg", "g", "mass"); }
                   }}
-                  className={`flex-1 py-1 rounded transition-all ${
-                    convType === t.id ? "bg-accent text-white" : "text-text-muted hover:text-text-default"
+                  className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
+                    convType === type ? "bg-accent/15 text-accent border border-accent/25" : "text-text-muted"
                   }`}
                 >
-                  {t.label}
+                  {type}
                 </button>
               ))}
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-text-muted uppercase">From Value</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+            {/* From block */}
+            <div className="p-4 rounded-xl border border-border-default/60 bg-background/25 space-y-2">
+              <label className="text-[9px] font-bold text-text-muted uppercase">From</label>
+              <div className="flex gap-2">
                 <input
                   type="number"
                   value={convVal}
@@ -401,228 +484,187 @@ export default function ToolsPage() {
                     setConvVal(e.target.value);
                     handleConvert(e.target.value, convFrom, convTo, convType);
                   }}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-border-default bg-background/45 text-text-default focus:border-accent"
+                  className="w-full px-2 py-1.5 text-xs rounded-lg border border-border-default bg-background/50 text-text-default focus:border-accent focus:outline-none"
                 />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-text-muted uppercase">From Unit</label>
                 <select
                   value={convFrom}
                   onChange={(e) => {
                     setConvFrom(e.target.value);
                     handleConvert(convVal, e.target.value, convTo, convType);
                   }}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-border-default bg-background/45 text-text-default focus:border-accent"
+                  className="px-2 py-1.5 text-xs rounded-lg border border-border-default bg-background/50 text-text-default focus:border-accent focus:outline-none"
                 >
                   {convType === "length" && (
                     <>
-                      <option value="m">Meter (m)</option>
-                      <option value="km">Kilometer (km)</option>
-                      <option value="cm">Centimeter (cm)</option>
-                      <option value="mm">Millimeter (mm)</option>
+                      <option value="m">m</option>
+                      <option value="km">km</option>
+                      <option value="cm">cm</option>
+                      <option value="mm">mm</option>
                     </>
                   )}
                   {convType === "temp" && (
                     <>
-                      <option value="c">Celsius (°C)</option>
-                      <option value="f">Fahrenheit (°F)</option>
-                      <option value="k">Kelvin (K)</option>
+                      <option value="C">°C</option>
+                      <option value="F">°F</option>
+                      <option value="K">K</option>
                     </>
                   )}
                   {convType === "mass" && (
                     <>
-                      <option value="kg">Kilogram (kg)</option>
-                      <option value="g">Gram (g)</option>
-                      <option value="mg">Milligram (mg)</option>
+                      <option value="kg">kg</option>
+                      <option value="g">g</option>
+                      <option value="mg">mg</option>
                     </>
                   )}
                 </select>
               </div>
+            </div>
 
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-text-muted uppercase">To Unit</label>
+            {/* To block */}
+            <div className="p-4 rounded-xl border border-border-default/60 bg-background/25 space-y-2">
+              <label className="text-[9px] font-bold text-text-muted uppercase">To</label>
+              <div className="flex gap-2">
+                <div className="w-full px-3 py-2 text-xs rounded-lg border border-border-default/60 bg-background/10 text-text-default select-none font-bold">
+                  {convResult || "0"}
+                </div>
                 <select
                   value={convTo}
                   onChange={(e) => {
                     setConvTo(e.target.value);
                     handleConvert(convVal, convFrom, e.target.value, convType);
                   }}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-border-default bg-background/45 text-text-default focus:border-accent"
+                  className="px-2 py-1.5 text-xs rounded-lg border border-border-default bg-background/50 text-text-default focus:border-accent focus:outline-none"
                 >
                   {convType === "length" && (
                     <>
-                      <option value="m">Meter (m)</option>
-                      <option value="km">Kilometer (km)</option>
-                      <option value="cm">Centimeter (cm)</option>
-                      <option value="mm">Millimeter (mm)</option>
+                      <option value="m">m</option>
+                      <option value="km">km</option>
+                      <option value="cm">cm</option>
+                      <option value="mm">mm</option>
                     </>
                   )}
                   {convType === "temp" && (
                     <>
-                      <option value="c">Celsius (°C)</option>
-                      <option value="f">Fahrenheit (°F)</option>
-                      <option value="k">Kelvin (K)</option>
+                      <option value="C">°C</option>
+                      <option value="F">°F</option>
+                      <option value="K">K</option>
                     </>
                   )}
                   {convType === "mass" && (
                     <>
-                      <option value="kg">Kilogram (kg)</option>
-                      <option value="g">Gram (g)</option>
-                      <option value="mg">Milligram (mg)</option>
+                      <option value="kg">kg</option>
+                      <option value="g">g</option>
+                      <option value="mg">mg</option>
                     </>
                   )}
                 </select>
               </div>
             </div>
-
-            <div className="p-4 rounded-xl border border-accent/20 bg-accent/5 text-center text-xs font-black text-text-default hover-bloom">
-              Result: {convResult} {convTo}
-            </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 4. Languages (English & Swahili Kamusi) */}
-        {activeTab === "dictionary" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
-            {/* Search Input (3/5) */}
-            <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 space-y-4 hover-bloom shadow-md">
-              <div className="flex gap-2 p-1 border border-border-default rounded-lg bg-background/40 font-bold text-[9px] uppercase text-center w-48 shrink-0">
-                <button
-                  onClick={() => { setDictType("english"); setDictData(null); }}
-                  className={`flex-1 py-1 rounded transition-all ${
-                    dictType === "english" ? "bg-accent text-white" : "text-text-muted hover:text-text-default"
-                  }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => { setDictType("kamusi"); setDictData(null); }}
-                  className={`flex-1 py-1 rounded transition-all ${
-                    dictType === "kamusi" ? "bg-accent text-white" : "text-text-muted hover:text-text-default"
-                  }`}
-                >
-                  Kamusi
-                </button>
+      {/* 4. LIVE DICTIONARY TAB */}
+      {activeTab === "dictionary" && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
+          {/* Lookup Panel (60%) */}
+          <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-5">
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">Word Lookup</h3>
+            
+            <form onSubmit={handleLookupWord} className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Enter word to lookup (e.g. 'physics')..."
+                  value={dictWord}
+                  onChange={(e) => setDictWord(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-border-default bg-background/30 text-text-default focus:border-accent focus:outline-none"
+                />
               </div>
+              <button
+                type="submit"
+                disabled={dictLoading || !dictWord.trim()}
+                className="px-4 py-2 rounded-lg bg-primary hover:bg-primary/95 text-white text-xs font-bold shadow-md active-press transition-colors disabled:opacity-40"
+              >
+                {dictLoading ? "Searching..." : "Define"}
+              </button>
+            </form>
 
-              <form onSubmit={handleDictSearch} className="flex gap-2">
-                <input
-                  type="text"
-                  value={dictQuery}
-                  onChange={(e) => setDictQuery(e.target.value)}
-                  placeholder={dictType === "english" ? "Search English word..." : "Tafuta neno la Kamusi..."}
-                  className="flex-1 bg-background border border-border-default px-3 py-1.5 rounded-lg text-xs text-text-default focus:border-accent focus:outline-none"
-                />
-                <button type="submit" className="p-2 rounded-lg bg-primary hover:bg-primary/95 text-white active-press">
-                  <Search className="h-4.5 w-4.5" />
-                </button>
-              </form>
-
-              {dictData ? (
-                <div className="p-4 rounded-xl border border-border-default bg-background/30 space-y-3">
-                  <h4 className="text-xs font-bold text-accent uppercase tracking-wider">{dictData.word || dictData.title}</h4>
-                  <p className="text-xs text-text-default leading-relaxed bg-background/30 p-2.5 rounded border border-border-default/40">
-                    {dictData.definition || dictData.meanings?.[0]?.definitions?.[0]?.definition}
-                  </p>
+            {/* Results Display */}
+            {dictData ? (
+              <div className="space-y-4 pt-3 border-t border-border-default/25 animate-fade-in">
+                <div className="flex justify-between items-center gap-4">
+                  <div>
+                    <h2 className="text-xl font-black text-text-default capitalize">{dictData.word}</h2>
+                    {dictData.phonetic && (
+                      <span className="text-xs text-accent font-semibold">{dictData.phonetic}</span>
+                    )}
+                  </div>
+                  <button
+                    onClick={playPronunciation}
+                    className="p-2.5 rounded-full bg-accent/15 hover:bg-accent/25 text-accent active-press transition-all shadow-sm border border-accent/25"
+                    title="Play pronunciation"
+                  >
+                    <Volume2 className="h-4.5 w-4.5" />
+                  </button>
                 </div>
-              ) : dictError ? (
-                <p className="text-xs text-passion font-semibold">{dictError}</p>
-              ) : (
-                <p className="text-xs text-text-muted font-medium italic">Search vocabulary above.</p>
-              )}
-            </div>
 
-            {/* Language Tips (2/5) */}
-            <div className="lg:col-span-2 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <BookText className="h-4.5 w-4.5 text-accent" />
-                <span>Languages Guide</span>
-              </h3>
-              <p className="text-[11px] text-text-muted leading-relaxed">
-                Try searching Kiswahili vocabulary like **Mawimbi** or **Nishati** inside the Swahili Kamusi mode!
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* 5. Religious Scripture verse searcher */}
-        {activeTab === "religion" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-in">
-            {/* Search Input (3/5) */}
-            <div className="lg:col-span-3 rounded-xl border border-border-default bg-surface p-5 space-y-4 hover-bloom shadow-md">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <BookMarked className="h-4.5 w-4.5 text-accent" />
-                <span>Religious Studies Scripture Searcher</span>
-              </h3>
-
-              <form onSubmit={handleRelSearch} className="flex gap-2">
-                <input
-                  type="text"
-                  value={relQuery}
-                  onChange={(e) => setRelQuery(e.target.value)}
-                  placeholder="Search Bible or Qur'an keywords (e.g. wave, creation)..."
-                  className="flex-1 bg-background border border-border-default px-3 py-1.5 rounded-lg text-xs text-text-default focus:border-accent focus:outline-none"
-                />
-                <button type="submit" className="p-2 rounded-lg bg-primary hover:bg-primary/95 text-white active-press">
-                  <Search className="h-4.5 w-4.5" />
-                </button>
-              </form>
-
-              {relData && (
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-wider mb-2">Bible Matches</h4>
-                    {relData.bible.length > 0 ? (
-                      relData.bible.map((v: any, idx: number) => (
-                        <div key={idx} className="p-3 bg-background/25 rounded border border-border-default text-xs mb-2">
-                          <p className="font-bold text-accent">{v.ref}</p>
-                          <p className="text-text-default leading-relaxed mt-1">&quot;{v.text}&quot;</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-[10px] text-text-muted italic">No Bible matches found.</p>
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-wider mb-2">Qur&apos;an Matches</h4>
-                    {relData.quran.length > 0 ? (
-                      relData.quran.map((v: any, idx: number) => (
-                        <div key={idx} className="p-3 bg-background/25 rounded border border-border-default text-xs mb-2">
-                          <p className="font-bold text-accent">{v.ref}</p>
-                          <p className="text-text-default leading-relaxed mt-1">&quot;{v.text}&quot;</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-[10px] text-text-muted italic">No Qur&apos;an matches found.</p>
-                    )}
-                  </div>
+                  {dictData.meanings?.map((m: any, idx: number) => (
+                    <div key={idx} className="space-y-2">
+                      <span className="text-[10px] font-bold text-accent uppercase tracking-wider bg-accent/15 px-2 py-0.5 rounded-full border border-accent/20">
+                        {m.partOfSpeech}
+                      </span>
+                      <div className="space-y-2.5 pl-2">
+                        {m.definitions?.slice(0, 2).map((d: any, dIdx: number) => (
+                          <div key={dIdx} className="space-y-1">
+                            <p className="text-xs text-text-default leading-relaxed font-semibold">
+                              • {d.definition}
+                            </p>
+                            {d.example && (
+                              <p className="text-[11px] text-text-muted italic leading-relaxed pl-3">
+                                &quot;{d.example}&quot;
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ) : dictError ? (
+              <div className="flex items-center gap-2 p-3.5 rounded-lg border border-yellow-500/20 bg-yellow-500/5 text-xs text-yellow-300">
+                <AlertCircle className="h-4.5 w-4.5 shrink-0" />
+                <span>{dictError}</span>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-text-muted space-y-2">
+                <BookMarked className="h-10 w-10 mx-auto opacity-30 animate-pulse" />
+                <p className="text-xs font-semibold">Search a vocabulary word above to see definitions.</p>
+              </div>
+            )}
+          </div>
 
-            {/* Info panel (2/5) */}
-            <div className="lg:col-span-2 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4 hover-bloom shadow-md">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">CRE & IRE Concordance</h3>
-              <p className="text-[11px] text-text-muted leading-relaxed">
-                Scripture matching checks matching keywords across both Christian and Islamic syllabus contexts to aid comparative essay writes.
-              </p>
+          {/* Quick instructions (40%) */}
+          <div className="lg:col-span-2 rounded-xl border border-border-default bg-surface p-5 md:p-6 space-y-4">
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">About Dictionary</h3>
+            <p className="text-xs text-text-muted leading-relaxed">
+              This dictionary queries the public **Free Dictionary API** in real-time. It is highly useful for studying vocabulary terms across science, geography, and mathematics.
+            </p>
+            <div className="p-3.5 rounded-lg bg-background/40 border border-border-default/40 space-y-1">
+              <span className="text-[9px] font-bold text-[#EAB308] uppercase">Try These Terms:</span>
+              <ul className="text-xs text-text-default space-y-1 font-semibold">
+                <li>• photosynthesis</li>
+                <li>• momentum</li>
+                <li>• quadratic</li>
+                <li>• agriculture</li>
+              </ul>
             </div>
           </div>
-        )}
-
-        {/* 6. Coding Studio tab */}
-        {activeTab === "coding" && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="flex justify-between items-center text-xs font-semibold text-text-muted">
-              <span>Execute wave and physics algorithm tests client-side.</span>
-              <span className="text-[10px] font-bold text-accent">Active Sandbox Mode</span>
-            </div>
-            <CodingStudio />
-          </div>
-        )}
-
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,32 +2,22 @@
 
 import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, CircleUserRound, Palette, Type, Search, ShieldCheck } from "lucide-react";
+import { Menu, X, Sparkles, ArrowRight, CheckCircle2, Award, Zap, BookOpen, Palette, Type, Search } from "lucide-react";
 import { Theme, useTheme } from "@/components/shared/ThemeProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
-import { WalkthroughSpotlight } from "@/components/shared/WalkthroughSpotlight";
 
 type SeniorPathway = "STEM" | "Social Sciences" | "Arts & Sports";
-
-interface School {
-  name: string;
-  badge: string;
-  type: string;
-  county: string;
-  verified: boolean;
-}
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   
-  // Splash, Onboarding, Command Palette, Walkthrough and Loading States
+  // Splash, Onboarding, Command Palette and Loading States
   const [isMounted, setIsMounted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
@@ -38,10 +28,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [studentName, setStudentName] = useState("");
   const [studentAge, setStudentAge] = useState("");
   const [studentSchool, setStudentSchool] = useState("");
-  const [selectedSchoolData, setSelectedSchoolData] = useState<School | null>(null);
-  const [schoolSearchQuery, setSchoolSearchQuery] = useState("");
-  const [showSchoolDropdown, setShowSchoolDropdown] = useState(false);
-  const [showCurriculumExpansion, setShowCurriculumExpansion] = useState(false);
   const [studentGrade, setStudentGrade] = useState("8"); // Default Junior Grade
   const [selectedPathway, setSelectedPathway] = useState<SeniorPathway | "">("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -49,34 +35,11 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [careerGoal, setCareerGoal] = useState("");
   
   const { theme, setTheme, fontFamily, setFontFamily } = useTheme();
-  
-  // School database mock
-  const mockSchools: School[] = [
-    { name: "Alliance High School", badge: "🛡", type: "National School", county: "Kiambu County", verified: true },
-    { name: "Kenya High School", badge: "👑", type: "National School", county: "Nairobi County", verified: true },
-    { name: "Mang'u High School", badge: "🦅", type: "National School", county: "Kiambu County", verified: true },
-    { name: "Starehe Boys' Centre", badge: "🌟", type: "National School", county: "Nairobi County", verified: true },
-    { name: "Alliance Girls High School", badge: "🌸", type: "National School", county: "Kiambu County", verified: true },
-    { name: "Our Lady Queen of Peace", badge: "🕊", type: "Extra County School", county: "Kajiado County", verified: false },
-  ];
-
-  // Rotating loading messages on Splash screen
-  const loadingMessages = [
-    "Initializing syllabus clusters...",
-    "Structuring CBC modules...",
-    "Waking Orbis AI tutor...",
-    "Syncing academic snapshots...",
-  ];
-  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
-
-  useEffect(() => {
-    if (showSplash) {
-      const msgInterval = setInterval(() => {
-        setLoadingMsgIdx((prev) => (prev + 1) % loadingMessages.length);
-      }, 600);
-      return () => clearInterval(msgInterval);
-    }
-  }, [showSplash]);
+  const gradeNum = Number.parseInt(studentGrade, 10);
+  const isSeniorGrade = gradeNum >= 10;
+  const totalOnboardingSteps = isSeniorGrade ? 6 : 4;
+  const goalsStep = isSeniorGrade ? 5 : 3;
+  const appearanceStep = totalOnboardingSteps;
 
   // Listen for Ctrl+K
   useEffect(() => {
@@ -113,11 +76,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
       const onboarded = localStorage.getItem("edupal-onboarded") === "true";
       setShowOnboarding(!onboarded);
-      // Run walkthrough spotlight overlay if already onboarded but walkthrough not run
-      const walkthroughRun = localStorage.getItem("edupal-walkthrough-run") === "true";
-      if (onboarded && !walkthroughRun) {
-        setShowWalkthrough(true);
-      }
     }, 0);
 
     // Hide splash after 2.5s
@@ -130,12 +88,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       clearTimeout(splashTimer);
     };
   }, []);
-
-  const gradeNum = Number.parseInt(studentGrade, 10);
-  const isSeniorGrade = gradeNum >= 10;
-  const totalOnboardingSteps = isSeniorGrade ? 6 : 4;
-  const goalsStep = isSeniorGrade ? 5 : 3;
-  const appearanceStep = totalOnboardingSteps;
 
   const handleNextStep = () => {
     setOnboardingStep((prev) => Math.min(prev + 1, totalOnboardingSteps));
@@ -166,12 +118,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       }
 
       setShowOnboarding(false);
-      setShowWalkthrough(true);
-      router.replace("/dashboard");
-    } catch (err) {
-      console.error("Local storage or router error, continuing client-side:", err);
-      setShowOnboarding(false);
-      setShowWalkthrough(true);
       router.replace("/dashboard");
     } finally {
       setIsCompletingOnboarding(false);
@@ -207,19 +153,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
   };
 
-  const handleSelectSchool = (school: School) => {
-    setStudentSchool(school.name);
-    setSelectedSchoolData(school);
-    setShowSchoolDropdown(false);
-    setSchoolSearchQuery(school.name);
-    // Show optional curriculum expansion block
-    setShowCurriculumExpansion(true);
-  };
-
-  const filteredSchools = mockSchools.filter((s) =>
-    s.name.toLowerCase().includes(schoolSearchQuery.toLowerCase())
-  );
-
   // Command palette options
   const commandList = [
     { title: "Go to Dashboard", route: "/dashboard", desc: "View study streak, daily challenge, and progress stats." },
@@ -227,7 +160,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
     { title: "Go to Orbis AI Assistant", route: "/orbis", desc: "Interactive AI homework solver and document summarizer." },
     { title: "Go to Personal Notebook", route: "/notebook", desc: "Create, edit, and search study notes with auto-save." },
     { title: "Go to Flashcards Deck", route: "/flashcards", desc: "Review vocabulary with 3D physical-style card flips." },
-    { title: "Go to Study Planner", route: "/calendar", desc: "Schedule assignment deadlines and study slots." },
+    { title: "Go to Study Calendar", route: "/calendar", desc: "Schedule assignment deadlines and study slots." },
     { title: "Go to Career Tracking", route: "/careers", desc: "Explore KCSE/KPSEA pathways and evaluate skill gaps." },
     { title: "Go to Performance Analytics", route: "/analytics", desc: "View the official 2025 KJSEA Results Slip with grading rubrics." },
     { title: "Go to Badges & Rank Portfolio", route: "/portfolio", desc: "Inspect unlocked consistency and effort badges." },
@@ -251,7 +184,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   if (showSplash) {
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0E0F13] text-white">
-        <div className="relative flex flex-col items-center gap-6 animate-fade-in text-center">
+        <div className="relative flex flex-col items-center gap-6 animate-fade-in">
           {/* Logo SVG (Neural Brain Redesign) */}
           <svg viewBox="0 0 100 100" className="h-24 w-24 animate-pulse" style={{ animationDuration: "3s" }}>
             <defs>
@@ -280,16 +213,13 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             <line x1="83" y1="52" x2="69" y2="54" stroke="url(#brainGrad)" strokeWidth="1.5" />
           </svg>
 
-          <div className="space-y-3">
-            <h1 className="text-3xl font-black tracking-wider animate-pulse">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-black tracking-wider">
               Edu<span className="bg-gradient-to-r from-[#FF6B9D] via-[#A855F7] to-[#3B82F6] bg-clip-text text-transparent">Pal</span>
             </h1>
-            <p className="text-xs text-gray-400 font-bold tracking-widest uppercase animate-fade-in" style={{ animationDelay: "1s" }}>
-              Learn • Grow • Achieve
+            <p className="text-xs text-gray-400 font-semibold tracking-widest uppercase">
+              LEARN • GROW • ACHIEVE
             </p>
-            <div className="h-6 overflow-hidden relative w-60 mx-auto mt-4 text-[10px] text-accent font-semibold tracking-wide uppercase font-mono">
-              <span className="animate-pulse">{loadingMessages[loadingMsgIdx]}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -315,8 +245,8 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           {/* Steps Content */}
           {onboardingStep === 1 && (
             <div className="space-y-5 text-center py-4 animate-fade-in">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent mx-auto animate-bounce" style={{ animationDuration: "3s" }}>
-                <Sparkles className="h-6 w-6 animate-pulse" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent mx-auto">
+                <Sparkles className="h-6 w-6" />
               </div>
               <div className="space-y-2">
                 <h2 className="text-xl md:text-2xl font-black text-text-default leading-tight">Welcome to EduPal!</h2>
@@ -325,17 +255,17 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-left">
-                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5 hover-bloom">
+                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5">
                   <BookOpen className="h-4 w-4 text-trust" />
                   <p className="text-xs font-bold">CBE Curriculums</p>
                   <p className="text-[10px] text-text-muted">Grade-specific study notes & strands.</p>
                 </div>
-                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5 hover-bloom">
+                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5">
                   <Zap className="h-4 w-4 text-[#EAB308]" />
                   <p className="text-xs font-bold">Daily Quizzes</p>
                   <p className="text-[10px] text-text-muted">Interactive tests to earn XP & badges.</p>
                 </div>
-                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5 hover-bloom">
+                <div className="p-3 rounded-xl border border-border-default bg-background/40 space-y-1.5">
                   <Award className="h-4 w-4 text-growth" />
                   <p className="text-xs font-bold">Orbis AI Assistant</p>
                   <p className="text-[10px] text-text-muted">Instant homework help and note summaries.</p>
@@ -387,99 +317,16 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                   </div>
                 </div>
 
-                {/* Searchable School Selector */}
-                <div className="space-y-1 relative">
+                <div className="space-y-1">
                   <label className="text-[10px] font-bold text-text-muted uppercase">School Name</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search school name..."
-                      value={schoolSearchQuery}
-                      onChange={(e) => {
-                        setSchoolSearchQuery(e.target.value);
-                        setShowSchoolDropdown(true);
-                      }}
-                      onFocus={() => setShowSchoolDropdown(true)}
-                      className="w-full px-3.5 py-2 text-xs rounded-lg border border-border-default bg-background/40 text-text-default focus:border-accent focus:outline-none"
-                    />
-                    <Search className="h-4 w-4 text-text-muted absolute right-3 top-1/2 -translate-y-1/2" />
-                  </div>
-
-                  {/* Dropdown lists */}
-                  {showSchoolDropdown && schoolSearchQuery.trim() !== "" && (
-                    <div className="absolute left-0 right-0 top-full mt-1 bg-surface border border-border-default rounded-lg z-50 shadow-xl max-h-[160px] overflow-y-auto p-1.5 space-y-1">
-                      {filteredSchools.length > 0 ? (
-                        filteredSchools.map((s) => (
-                          <button
-                            key={s.name}
-                            type="button"
-                            onClick={() => handleSelectSchool(s)}
-                            className="w-full text-left px-3 py-2 rounded text-xs hover:bg-background flex items-center justify-between text-text-default"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <span>{s.badge}</span>
-                              <span className="font-semibold">{s.name}</span>
-                            </span>
-                            {s.verified && <span className="text-[8px] font-bold text-accent uppercase">Verified</span>}
-                          </button>
-                        ))
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setStudentSchool(schoolSearchQuery);
-                            setSelectedSchoolData(null);
-                            setShowSchoolDropdown(false);
-                          }}
-                          className="w-full text-left px-3 py-2 rounded text-xs hover:bg-background text-text-muted italic"
-                        >
-                          Use &quot;{schoolSearchQuery}&quot; (Custom School)
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  <input
+                    type="text"
+                    placeholder="e.g. Our Lady Queen of Peace"
+                    value={studentSchool}
+                    onChange={(e) => setStudentSchool(e.target.value)}
+                    className="w-full px-3.5 py-2 text-xs rounded-lg border border-border-default bg-background/40 text-text-default focus:border-accent focus:outline-none"
+                  />
                 </div>
-
-                {/* Selected School Card and verified badge */}
-                {selectedSchoolData && (
-                  <div className="p-3.5 rounded-xl border border-border-default bg-background/50 flex justify-between items-start gap-4 animate-fade-in hover-bloom">
-                    <div className="space-y-1">
-                      <p className="text-xs font-bold text-text-default flex items-center gap-1">
-                        <span>{selectedSchoolData.badge}</span>
-                        <span>{selectedSchoolData.name}</span>
-                      </p>
-                      <p className="text-[10px] text-text-muted">
-                        {selectedSchoolData.type} • {selectedSchoolData.county}
-                      </p>
-                    </div>
-                    {selectedSchoolData.verified && (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-extrabold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-full">
-                        <ShieldCheck className="h-3 w-3" />
-                        <span>Verified</span>
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {/* Optional Curriculum Expansion Badge */}
-                {showCurriculumExpansion && (
-                  <div className="p-4 rounded-xl border border-accent/20 bg-accent/5 space-y-2.5 animate-fade-in hover-bloom">
-                    <h4 className="text-xs font-bold text-text-default flex items-center gap-1">
-                      <Sparkles className="h-4 w-4 text-accent animate-pulse" />
-                      <span>🌍 Expand Your Learning</span>
-                    </h4>
-                    <p className="text-[11px] text-text-muted leading-relaxed">
-                      Interested in international curricula? Access extra modules for:
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 text-[9px] font-bold uppercase tracking-wide">
-                      {["Cambridge", "IB", "AP", "CBSE", "Olympiads"].map((c) => (
-                        <span key={c} className="px-2 py-0.5 bg-background border border-border-default rounded text-text-default">
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -496,7 +343,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                       setSelectedPathway(path.id);
                       setSelectedSubjects([]);
                     }}
-                    className={`p-3.5 rounded-xl border text-left transition-all active-press hover-bloom ${
+                    className={`p-3.5 rounded-xl border text-left transition-all active-press ${
                       selectedPathway === path.id
                         ? "border-accent bg-accent/5 text-accent"
                         : "border-border-default bg-background/40 text-text-default hover:border-text-muted"
@@ -519,7 +366,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                   <button
                     key={sub}
                     onClick={() => toggleSubject(sub)}
-                    className={`p-2.5 rounded-lg border text-xs font-semibold transition-all active-press hover-bloom ${
+                    className={`p-2.5 rounded-lg border text-xs font-semibold transition-all active-press ${
                       selectedSubjects.includes(sub)
                         ? "border-accent bg-accent/5 text-accent"
                         : "border-border-default bg-background/40 text-text-default hover:border-text-muted"
@@ -579,7 +426,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                     <button
                       key={t.id}
                       onClick={() => setTheme(t.id)}
-                      className={`flex items-center gap-1.5 p-2 rounded-lg border text-[10px] font-bold transition-all active-press hover-bloom ${
+                      className={`flex items-center gap-1.5 p-2 rounded-lg border text-[10px] font-bold transition-all active-press ${
                         theme === t.id ? "border-accent bg-accent/5 text-accent" : "border-border-default bg-background/40 text-text-default"
                       }`}
                     >
@@ -606,7 +453,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                     <button
                       key={f.id}
                       onClick={() => setFontFamily(f.id)}
-                      className={`p-2 rounded-lg border text-xs font-semibold transition-all active-press hover-bloom ${
+                      className={`p-2 rounded-lg border text-xs font-semibold transition-all active-press ${
                         fontFamily === f.id ? "border-accent bg-accent/5 text-accent" : "border-border-default bg-background/40 text-text-default"
                       }`}
                       style={{ fontFamily: `var(--font-${f.id}), sans-serif` }}
@@ -660,16 +507,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   // 3. Normal App Shell
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background text-text-default font-inter relative">
-      {/* Walkthrough Spotlight Overlay */}
-      {showWalkthrough && (
-        <WalkthroughSpotlight 
-          onClose={() => {
-            setShowWalkthrough(false);
-            localStorage.setItem("edupal-walkthrough-run", "true");
-          }} 
-        />
-      )}
-
       {/* Floating Command Palette Trigger - Desktop only */}
       <button 
         onClick={() => { setShowCommandPalette(true); setCommandSearch(""); }}
