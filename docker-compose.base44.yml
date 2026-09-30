@@ -1,0 +1,20 @@
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - BASE44_PUBLIC_HOST_SUFFIX=${BASE44_PUBLIC_HOST_SUFFIX:-localhost}
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=${BASE44_SANDBOX_HOST_DOMAIN:-}
+    command: ["sh", "-ec", "npm install --no-audit --no-fund && exec npm run dev -- --webpack -H 0.0.0.0 -p 3000"]
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
